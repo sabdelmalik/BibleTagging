@@ -17,8 +17,9 @@ using System.Collections.Specialized;
 using System.Reflection.Emit;
 using Microsoft.VisualBasic.ApplicationServices;
 using Microsoft.VisualBasic;
+using System.Diagnostics;
 
-namespace BibleTagging
+namespace BibleTaggingUtil
 {
     public enum VersionToLoad
     {
@@ -34,7 +35,6 @@ namespace BibleTagging
         private EditorPanel editorPanel;
         private VerseSelectionPanel verseSelectionPanel;
 
-        private const string biblesConfigFile = "BiblesConfig.txt";
         private TOTHTReaderEx totht = new TOTHTReaderEx();
         private TAGNTReader tagnt = new TAGNTReader();
 
@@ -44,15 +44,11 @@ namespace BibleTagging
         // to save updated dictionary
         // https://stackoverflow.com/questions/36333567/saving-a-dictionaryint-object-in-c-sharp-serialization
 
-        Dictionary<string, string> referenceVersion = new Dictionary<string, string>();
-        Dictionary<string, string> targetVersion = new Dictionary<string, string>();
-        Dictionary<string, string> targetVersionUpdates = new Dictionary<string, string>();
+        private Dictionary<string, string> referenceVersion = new Dictionary<string, string>();
+        private Dictionary<string, string> targetVersion = new Dictionary<string, string>();
+        private Dictionary<string, string> targetVersionUpdates = new Dictionary<string, string>();
 
-        private string untaggedBible=string.Empty;
-        private string taggedBible = string.Empty;
-        private string kjv= string.Empty;
-        private List<string> hebrewReferences = new List<string>();
-        private List<string> greekReferences = new List<string>();
+        private ConfigurationHolder config = new ConfigurationHolder();
         public BibleTaggingForm()
         {
             InitializeComponent();
@@ -152,9 +148,11 @@ namespace BibleTagging
                     return;
                 }
             }
-            if (!ReadBiblesConfig(biblesFolder))
+
+            string confResult = config.ReadBiblesConfig(biblesFolder);
+            if (!string.IsNullOrEmpty(confResult))
             {
-                MessageBox.Show("Can not continue because config file is missing");
+                MessageBox.Show(confResult);
                 biblesFolder = GetBiblesFolder();
                 if (string.IsNullOrEmpty(biblesFolder))
                 {
@@ -162,7 +160,17 @@ namespace BibleTagging
                     return;
                 }
                 else
-                    ReadBiblesConfig(biblesFolder);
+                {
+                    confResult = config.ReadBiblesConfig(biblesFolder);
+                    if (!string.IsNullOrEmpty(confResult))
+                    {
+                        MessageBox.Show(confResult);
+                        this.Close();
+                        return;
+                    }
+                }
+
+
             }
 
 
@@ -170,9 +178,9 @@ namespace BibleTagging
 
             bool taggedBibleOk = false;
             bool untaggedBibleOk = false;
-            string taggedFolder = Path.GetDirectoryName(taggedBible);
+            string taggedFolder = Path.GetDirectoryName(config.TaggedBible);
 
-            if (!string.IsNullOrEmpty(untaggedBible) && File.Exists(untaggedBible))
+            if (!string.IsNullOrEmpty(config.UnTaggedBible) && File.Exists(config.UnTaggedBible))
             {
                 untaggedBibleOk = true;
             }
@@ -196,7 +204,7 @@ namespace BibleTagging
                 return;
             }
 
-            if (string.IsNullOrEmpty(kjv) || !File.Exists(kjv))
+            if (string.IsNullOrEmpty(config.KJV) || !File.Exists(config.KJV))
             {
                 MessageBox.Show("KJV is missing");
                 this.Close();
@@ -204,20 +212,20 @@ namespace BibleTagging
             }
 
 
-            if(untaggedBibleOk) LoadBible(untaggedBible, targetVersion);
+            if(untaggedBibleOk) LoadBible(config.UnTaggedBible, targetVersion);
             if (taggedBibleOk)
             {
                 string[] files = Directory.GetFiles(taggedFolder);
                 LoadBible(files[0], targetVersionUpdates);
             }
-            LoadBible(kjv, referenceVersion);
+            LoadBible(config.KJV, referenceVersion);
 
             bool result = false;
-            if (hebrewReferences.Count > 0)
+            if (config.HebrewReferences.Count > 0)
             {
-                for (int i = 0; i < hebrewReferences.Count; i++)
+                for (int i = 0; i < config.HebrewReferences.Count; i++)
                 {
-                    result = totht.LoadBibleFile(hebrewReferences[i]);
+                    result = totht.LoadBibleFile(config.HebrewReferences[i]);
                 }
             }
             if(!result)
@@ -227,12 +235,12 @@ namespace BibleTagging
                 return;
             }
 
-            if (greekReferences.Count > 0)
+            if (config.GreekReferences.Count > 0)
             {
-                result = tagnt.LoadBibleFile(greekReferences[0]);
-                for (int i = 1; i < greekReferences.Count; i++)
+                result = tagnt.LoadBibleFile(config.GreekReferences[0]);
+                for (int i = 1; i < config.GreekReferences.Count; i++)
                 {
-                    result = tagnt.AddBibleFile(greekReferences[i]);
+                    result = tagnt.AddBibleFile(config.GreekReferences[i]);
                 }
             }
             if (!result)
@@ -248,63 +256,6 @@ namespace BibleTagging
             verseSelectionPanel.FireVerseChanged();
         }
 
-        private bool ReadBiblesConfig(string biblesFolder)
-        {
-            string configFilePath = Path.Combine(biblesFolder, biblesConfigFile);
-            if (!File.Exists(configFilePath))
-                return false;
-
-            Properties.Settings.Default.TargetTextDirection = "LTR";
-            using (StreamReader sr = new StreamReader(configFilePath))
-            {
-                while (sr.Peek() >= 0)
-                {
-                    string line = sr.ReadLine().Trim();
-                    if (string.IsNullOrEmpty(line))
-                        continue;
-
-                    string[] parts = line.Split('=');
-                    if (parts.Length != 2)
-                        continue;
-
-                    switch(parts[0].Trim().ToLower())
-                    {
-                        case "untaggedbible":
-                            untaggedBible = Path.Combine(biblesFolder, parts[1].Trim());
-                            break;
-                        case "taggedbible":
-                            taggedBible = Path.Combine(biblesFolder, "tagged\\" + parts[1].Trim());
-                            break;
-                        case "kjv":
-                            kjv = Path.Combine(biblesFolder, parts[1].Trim());
-                            break;
-                        case "hebrewreferences":
-                            {
-                                string[] hebParts = parts[1].Split(',');
-                                for (int i = 0; i < hebParts.Length; i++)
-                                {
-                                    hebrewReferences.Add(Path.Combine(biblesFolder, hebParts[i]));
-                                }
-                            }
-                            break;
-                        case "greekreferences":
-                            {
-                                string[] grkParts = parts[1].Split(',');
-                                for (int i = 0; i < grkParts.Length; i++)
-                                {
-                                    greekReferences.Add(Path.Combine(biblesFolder, grkParts[i]));
-                                }
-                            }
-                            break;
-                        case "targettextdirection":
-                            Properties.Settings.Default.TargetTextDirection = parts[1].Trim();
-                            break;
-                     }
-
-                }
-            }
-            return true;
-        }
 
         /// <summary>
         /// 
@@ -436,7 +387,7 @@ namespace BibleTagging
             if (targetVersionUpdates.Count > 0)
             {
                 // construce Updates fileName
-                string taggedFolder = Path.GetDirectoryName(taggedBible);
+                string taggedFolder = Path.GetDirectoryName(config.TaggedBible);
                 string oldTaggedFolder = Path.Combine(taggedFolder, "OldTagged");
                 if(!Directory.Exists(oldTaggedFolder))  
                     Directory.CreateDirectory(oldTaggedFolder);
@@ -454,7 +405,7 @@ namespace BibleTagging
                         File.Move(src, dst);
                 }
 
-                string baseName = Path.GetFileNameWithoutExtension(taggedBible);
+                string baseName = Path.GetFileNameWithoutExtension(config.TaggedBible);
                 string updatesFileName = string.Format("{0:s}_{1:s}.txt", baseName, DateTime.Now.ToString("yyyy_MM_dd_HH_mm"));
                 using (StreamWriter outputFile = new StreamWriter(Path.Combine(taggedFolder, updatesFileName)))
                 {
@@ -1000,6 +951,44 @@ namespace BibleTagging
         private void nextVerseToolStripMenuItem_Click(object sender, EventArgs e)
         {
             NextUnknownVerse();
+        }
+
+        private void generateSWORDFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OSIS_Generator generator = new OSIS_Generator(config);
+            try
+            {
+                string biblesFolder = Properties.Settings.Default.BiblesFolder;
+                string parentFolder = Directory.GetParent(biblesFolder).FullName;
+                string executable = Path.Combine(parentFolder, "osis2mod.exe");
+                string targetFolder = Path.Combine(biblesFolder, config.OSIS[OsisConstants.osisIDWork]);
+                string xmlFile = Path.Combine(biblesFolder, config.OSIS[OsisConstants.output_file]);
+                if (!Directory.Exists(targetFolder)) 
+                {
+                    Directory.CreateDirectory(targetFolder);
+                }
+                else
+                {
+                    string[] files = Directory.GetFiles(targetFolder);
+                    foreach (string file in files)
+                    {
+                        File.Delete(file);
+                    }
+                }
+                generator.Generate();
+
+                Process process = new Process();
+                process.StartInfo.FileName = executable;
+                process.StartInfo.Arguments = targetFolder + " " + xmlFile + " -v NRSV -b 4 -z";
+                process.Start();
+
+                MessageBox.Show("Bible Generation completed!");
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Bible Generation Failed \r\n" + ex);
+            }
         }
     }
 }

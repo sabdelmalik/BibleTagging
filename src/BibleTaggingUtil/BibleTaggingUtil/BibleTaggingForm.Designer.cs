@@ -1,5 +1,5 @@
 ﻿
-namespace BibleTagging
+namespace BibleTaggingUtil
 {
     partial class BibleTaggingForm
     {
@@ -46,6 +46,7 @@ namespace BibleTagging
             this.nextVerseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog3 = new System.Windows.Forms.FolderBrowserDialog();
+            this.generateSWORDFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -74,7 +75,8 @@ namespace BibleTagging
             this.saveToolStripMenuItem,
             this.saveKJVPlainToolStripMenuItem,
             this.saveHebrewToolStripMenuItem,
-            this.nextVerseToolStripMenuItem});
+            this.nextVerseToolStripMenuItem,
+            this.generateSWORDFilesToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1060, 28);
@@ -142,6 +144,13 @@ namespace BibleTagging
             // 
             this.openFileDialog.FileName = "openFileDialog1";
             // 
+            // generateSWORDFilesToolStripMenuItem
+            // 
+            this.generateSWORDFilesToolStripMenuItem.Name = "generateSWORDFilesToolStripMenuItem";
+            this.generateSWORDFilesToolStripMenuItem.Size = new System.Drawing.Size(118, 24);
+            this.generateSWORDFilesToolStripMenuItem.Text = "Generate SWORD Files";
+            this.generateSWORDFilesToolStripMenuItem.Click += new System.EventHandler(this.generateSWORDFilesToolStripMenuItem_Click);
+            // 
             // BibleTaggingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -181,6 +190,7 @@ namespace BibleTagging
         private System.Windows.Forms.ToolStripMenuItem saveHebrewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem nextVerseToolStripMenuItem;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog3;
+        private System.Windows.Forms.ToolStripMenuItem generateSWORDFilesToolStripMenuItem;
     }
 }
 

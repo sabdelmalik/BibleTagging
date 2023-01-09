@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace BibleTagging
+namespace BibleTaggingUtil
 {
     /// <summary>
     /// This part of the class deals with Hebrew Target Verse

@@ -12,7 +12,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 
-namespace BibleTagging
+namespace BibleTaggingUtil
 {
     /// <summary>
     /// This class is based on the Sample factory pattern converter taken from 

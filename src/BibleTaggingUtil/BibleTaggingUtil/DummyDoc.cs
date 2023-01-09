@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using WeifenLuo.WinFormsUI.Docking;
 using System.IO;
 
-namespace BibleTagging
+namespace BibleTaggingUtil
 {
     public partial class DummyDoc : DockContent
     {

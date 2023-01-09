@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace BibleTagging
+namespace BibleTaggingUtil
 {
     public partial class EditorPanel : DockContent
     {

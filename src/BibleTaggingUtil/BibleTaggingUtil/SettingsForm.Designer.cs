@@ -1,5 +1,5 @@
 ﻿
-namespace BibleTagging
+namespace BibleTaggingUtil
 {
     partial class SettingsForm
     {

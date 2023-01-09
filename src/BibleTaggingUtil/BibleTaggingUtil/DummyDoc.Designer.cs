@@ -1,4 +1,4 @@
-namespace BibleTagging
+namespace BibleTaggingUtil
 {
     partial class DummyDoc
     {

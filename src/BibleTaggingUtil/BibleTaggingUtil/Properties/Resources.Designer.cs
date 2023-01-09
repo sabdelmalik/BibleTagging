@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BibleTagging.Properties {
+namespace BibleTaggingUtil.Properties {
     using System;
     
     

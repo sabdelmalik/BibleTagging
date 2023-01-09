@@ -12,7 +12,7 @@ using WeifenLuo.WinFormsUI.Docking;
 using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
-namespace BibleTagging
+namespace BibleTaggingUtil
 {
 
     public partial class VerseSelectionPanel : DockContent
