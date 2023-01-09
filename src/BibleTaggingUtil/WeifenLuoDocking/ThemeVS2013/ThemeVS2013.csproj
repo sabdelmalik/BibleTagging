@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>WeifenLuo.WinFormsUI.Docking.ThemeVS2013</AssemblyName>
+    <RootNamespace>WeifenLuo.WinFormsUI</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="ThemeVS2012\" />
+    <Folder Include="ThemeVS2013\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WinFormsUI\WinFormsUI.csproj" />
+  </ItemGroup>
+
+</Project>

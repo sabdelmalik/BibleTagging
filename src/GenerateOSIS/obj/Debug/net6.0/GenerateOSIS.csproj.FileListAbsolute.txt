@@ -1,0 +1,15 @@
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\bin\Debug\net6.0\GenerateOSIS.exe
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\bin\Debug\net6.0\GenerateOSIS.deps.json
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\bin\Debug\net6.0\GenerateOSIS.runtimeconfig.json
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\bin\Debug\net6.0\GenerateOSIS.dll
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\bin\Debug\net6.0\GenerateOSIS.pdb
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\GenerateOSIS.csproj.AssemblyReference.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\GenerateOSIS.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\GenerateOSIS.AssemblyInfoInputs.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\GenerateOSIS.AssemblyInfo.cs
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\GenerateOSIS.csproj.CoreCompileInputs.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\GenerateOSIS.dll
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\refint\GenerateOSIS.dll
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\GenerateOSIS.pdb
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\GenerateOSIS.genruntimeconfig.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\GenerateOSIS\obj\Debug\net6.0\ref\GenerateOSIS.dll

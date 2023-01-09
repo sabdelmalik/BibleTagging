@@ -1,0 +1,14 @@
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\bin\Release\net6.0-windows\WeifenLuo.WinFormsUI.Docking.deps.json
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\bin\Release\net6.0-windows\WeifenLuo.WinFormsUI.Docking.dll
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\bin\Release\net6.0-windows\WeifenLuo.WinFormsUI.Docking.pdb
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\WinFormsUI.csproj.AssemblyReference.cache
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\WeifenLuo.WinFormsUI.Docking.Strings.resources
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\WinFormsUI.csproj.GenerateResource.cache
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\WinFormsUI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\WinFormsUI.AssemblyInfoInputs.cache
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\WinFormsUI.AssemblyInfo.cs
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\WinFormsUI.csproj.CoreCompileInputs.cache
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\WeifenLuo.WinFormsUI.Docking.dll
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\refint\WeifenLuo.WinFormsUI.Docking.dll
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\WeifenLuo.WinFormsUI.Docking.pdb
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingUtil\WeifenLuoDocking\WinFormsUI\obj\Release\net6.0-windows\ref\WeifenLuo.WinFormsUI.Docking.dll

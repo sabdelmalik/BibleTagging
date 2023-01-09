@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup />
+  <ItemGroup>
+    <Compile Update="BibleTaggingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="BrowserPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="DummyDoc.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="EditorPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="EditorPanelTAGNT.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="EditorPanelTarget.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="EditorPanelTOTHT.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="VerseSelectionPanel.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>

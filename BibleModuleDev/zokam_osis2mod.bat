@@ -1,0 +1,1 @@
+C:\Users\samim\Documents\MyProjects\STEP\osis-bibles\sword-utilities-1.7.0\osis2mod.exe .\zokamt zokamt.xml -v KJV -b 4 -z

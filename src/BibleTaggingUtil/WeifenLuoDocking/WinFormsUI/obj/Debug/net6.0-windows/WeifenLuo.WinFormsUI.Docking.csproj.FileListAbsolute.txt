@@ -1,0 +1,14 @@
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\bin\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.deps.json
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\bin\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.dll
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\bin\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.pdb
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.csproj.AssemblyReference.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.Docking.Strings.resources
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.csproj.GenerateResource.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.AssemblyInfoInputs.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.AssemblyInfo.cs
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.csproj.CoreCompileInputs.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.dll
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\refint\WeifenLuo.WinFormsUI.Docking.dll
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\WeifenLuo.WinFormsUI.Docking.pdb
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsUI\obj\Debug\net6.0-windows\ref\WeifenLuo.WinFormsUI.Docking.dll

@@ -1,0 +1,12 @@
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\bin\Debug\net6.0-windows\WinFormsUI.deps.json
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\bin\Debug\net6.0-windows\WinFormsUI.dll
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\bin\Debug\net6.0-windows\WinFormsUI.pdb
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsUI.csproj.AssemblyReference.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsUI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsUI.AssemblyInfoInputs.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsUI.AssemblyInfo.cs
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsUI.csproj.CoreCompileInputs.cache
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsUI.dll
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\obj\Debug\net6.0-windows\refint\WinFormsUI.dll
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\obj\Debug\net6.0-windows\WinFormsUI.pdb
+C:\Users\samim\Documents\MyProjects\STEP\Programs\MyDocking\WinFormsApp1\obj\Debug\net6.0-windows\ref\WinFormsUI.dll
