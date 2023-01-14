@@ -89,6 +89,8 @@ namespace BibleTaggingUtil
                     dgvTOTHTView.Rows[1].Cells[i].Style.ForeColor = Color.Black;
             }
 
+            dgvReferenceVerse.ClearSelection();
+
             dgvReferenceVerse.Rows[0].ReadOnly = true;
             dgvReferenceVerse.Rows[1].ReadOnly = true;
 

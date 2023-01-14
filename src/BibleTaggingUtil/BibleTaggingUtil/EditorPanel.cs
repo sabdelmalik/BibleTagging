@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 
 using WeifenLuo.WinFormsUI.Docking;
@@ -17,6 +18,11 @@ namespace BibleTaggingUtil
         private const string   MERGE_CONTEXT_MENU = "Merge";
         private const string   SPLIT_CONTEXT_MENU = "Split";
         private const string   DELETE_CONTEXT_MENU = "Delete Tag";
+        private const string   REVERSE_CONTEXT_MENU = "Reverse Tags";
+        private const string  DELETE_LEFT_CONTEXT_MENU = "Delete Left Tags";
+        private const string DELETE_RIGHT_CONTEXT_MENU = "Delete Right Tags";
+
+
 
         private BibleTaggingForm parent;
         private BrowserPanel browser;
@@ -70,6 +76,7 @@ namespace BibleTaggingUtil
             // Subscribe to the Reference Verse click event for drag & drop
             dgvReferenceVerse.MouseDown += DgvReferenceVerse_MouseDown;
             dgvTOTHTView.MouseDown += DgvTOTHTView_MouseDown;
+            dgvTargetVerse.MouseDown += DgvTargetVerse_MouseDown;
             // And Drop
             dgvTargetVerse.DragEnter += DgvTargetVerse_DragEnter;
             dgvTargetVerse.DragDrop += DgvTargetVerse_DragDrop;
@@ -346,6 +353,7 @@ namespace BibleTaggingUtil
                 }
             }
 
+            dgvReferenceVerse.ClearSelection();
 
             dgvReferenceVerse.Rows[0].ReadOnly = true;
             dgvReferenceVerse.Rows[1].ReadOnly = true;
@@ -399,52 +407,6 @@ namespace BibleTaggingUtil
                 }
             }
 
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void DgvReferenceVerse_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left && e.Clicks == 1)
-            {
-                DataGridView.HitTestInfo info = dgvReferenceVerse.HitTest(e.X, e.Y);
-                if (info.RowIndex >= 0)
-                {
-                    if (info.RowIndex >= 0 && info.ColumnIndex >= 0)
-                    {
-                        string text = (String)
-                               dgvReferenceVerse.Rows[1].Cells[info.ColumnIndex].Value;
-                        if (text != null)
-                        {
-                            //Need to put braces here  CHANGE
-                            dgvReferenceVerse.DoDragDrop(text, DragDropEffects.Copy);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void DgvTOTHTView_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left && e.Clicks == 1)
-            {
-                DataGridView.HitTestInfo info = dgvTOTHTView.HitTest(e.X, e.Y);
-                if (info.RowIndex >= 0)
-                {
-                    if (info.RowIndex >= 0 && info.ColumnIndex >= 0)
-                    {
-                        string text = ((String)dgvTOTHTView.Rows[3].Cells[info.ColumnIndex].Value).Trim();
-                        if (text != null)
-                        {
-                            //Need to put braces here  CHANGE
-                            dgvTOTHTView.DoDragDrop(text, DragDropEffects.Copy);
-                        }
-                    }
-                }
-            }
         }
 
         private void DgvTOTHTView_CellContentDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -501,6 +463,9 @@ namespace BibleTaggingUtil
         private void DgvTargetVerseContextMenu_Opening(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
+            if (dgvTargetVerse.SelectedCells.Count == 0)
+                return;
+
             if (dgvTargetVerse.SelectedCells.Count > 1)
             {
                 bool sameRow = true;
@@ -527,11 +492,31 @@ namespace BibleTaggingUtil
             {
                 if (dgvTargetVerse.SelectedCells[0].RowIndex == 1)
                 {
+                    string text = (String)dgvTargetVerse.SelectedCells[0].Value;
+
+                    if (string.IsNullOrEmpty(text))
+                        return;
+
+                    dgvTargetVerse.ContextMenuStrip.Items.Clear();
 
                     dgvTargetVerse.ContextMenuStrip.Items.Clear();
                     ToolStripMenuItem deleteMenuItem = new ToolStripMenuItem(DELETE_CONTEXT_MENU);
-
                     dgvTargetVerse.ContextMenuStrip.Items.Add(deleteMenuItem);
+
+                    string[] strings = text.Split(' ');
+                    if (strings.Length > 1)
+                    {
+                        ToolStripMenuItem reverseMenuItem = new ToolStripMenuItem(REVERSE_CONTEXT_MENU);
+                        dgvTargetVerse.ContextMenuStrip.Items.Add(reverseMenuItem);
+
+                        ToolStripMenuItem deleteLeftMenuItem = new ToolStripMenuItem(DELETE_LEFT_CONTEXT_MENU);
+                        dgvTargetVerse.ContextMenuStrip.Items.Add(deleteLeftMenuItem);
+
+                        ToolStripMenuItem deleteRightMenuItem = new ToolStripMenuItem(DELETE_RIGHT_CONTEXT_MENU);
+                        dgvTargetVerse.ContextMenuStrip.Items.Add(deleteRightMenuItem);
+                    }
+
+
                     e.Cancel = false;
                 }
                 else
@@ -567,7 +552,7 @@ namespace BibleTaggingUtil
                 for (int i = 0; i < newWords.Length; i++)
                 {
                     string newText = (string)dgvTargetVerse.Rows[0].Cells[columnIndex].Value;
-                    string newTag =  (string)dgvTargetVerse.Rows[1].Cells[columnIndex].Value;
+                    string newTag = (string)dgvTargetVerse.Rows[1].Cells[columnIndex].Value;
                     if (newTag.Contains("???")) newTag = string.Empty;
                     if (columnIndex == firstMergeIndex)
                     {
@@ -576,7 +561,7 @@ namespace BibleTaggingUtil
                             columnIndex += 1;
                             newText += " " + (string)dgvTargetVerse.Rows[0].Cells[columnIndex].Value;
                             string currentTag = (string)dgvTargetVerse.Rows[1].Cells[columnIndex].Value;
-                            if(!currentTag.Contains("???"))
+                            if (!currentTag.Contains("???"))
                                 newTag += " " + currentTag;
                         }
                     }
@@ -603,7 +588,7 @@ namespace BibleTaggingUtil
 
                 string stringToSplit = (string)dgvTargetVerse.Rows[0].Cells[splitIndex].Value;
                 string[] splitWords = stringToSplit.Split(' ');
-                if(splitWords.Length == 1)
+                if (splitWords.Length == 1)
                 {
                     // nothing to do
                     return;
@@ -614,7 +599,7 @@ namespace BibleTaggingUtil
                 if (string.IsNullOrEmpty(tagToSplit))
                 {
                     splitTags = new string[1];
-                    splitTags[0]= String.Empty;
+                    splitTags[0] = String.Empty;
                 }
                 else
                     splitTags = tagToSplit.Split(' ');
@@ -657,39 +642,139 @@ namespace BibleTaggingUtil
                     dgvTargetVerse.Columns[i].DisplayIndex = newWords.Length - i - 1;
                 }
 
+                dgvTargetVerse.ClearSelection();
+
                 dgvTargetVerse.Rows[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
                 dgvTargetVerse.Rows[0].ReadOnly = true;
 
-//                dgvTargetVerse.Rows.RemoveAt(0);
-//                dgvTargetVerse.Rows.Insert(0, newWords);
+                //                dgvTargetVerse.Rows.RemoveAt(0);
+                //                dgvTargetVerse.Rows.Insert(0, newWords);
 
-//                dgvTargetVerse.Rows.RemoveAt(1);
-//                dgvTargetVerse.Rows.Insert(1, newTags);
+                //                dgvTargetVerse.Rows.RemoveAt(1);
+                //                dgvTargetVerse.Rows.Insert(1, newTags);
 
             }
             else if (e.ClickedItem.Text == DELETE_CONTEXT_MENU)
             {
                 dgvTargetVerse.SelectedCells[0].Value = string.Empty;
             }
+            else
+            {
+                string[] strings = ((string)dgvTargetVerse.SelectedCells[0].Value).Split(' ');
+                if (strings.Length < 2) return;
+
+                string newText = string.Empty;
+                if (e.ClickedItem.Text == REVERSE_CONTEXT_MENU)
+                {
+                    newText= strings[strings.Length - 1];
+                    for(int i = strings.Length - 2; i >= 0; i--)
+                    {
+                        newText += " " + strings[i];
+                    }
+                    dgvTargetVerse.SelectedCells[0].Value = newText;
+                }
+                else if (e.ClickedItem.Text == DELETE_LEFT_CONTEXT_MENU)
+                {
+                    for(int i = 1; i < strings.Length; i++)
+                    {
+                        newText += string.IsNullOrEmpty(newText)? strings[i] : " " + strings[i];
+                    }
+                    dgvTargetVerse.SelectedCells[0].Value = newText;
+                }
+                else if (e.ClickedItem.Text == DELETE_RIGHT_CONTEXT_MENU)
+                {
+                    for (int i = 0; i < strings.Length -1; i++)
+                    {
+                        newText += string.IsNullOrEmpty(newText) ? strings[i] : " " + strings[i];
+                    }
+                    dgvTargetVerse.SelectedCells[0].Value = newText;
+                }
+            }
+
+
 
         }
 
-        private void DgvTargetVerse_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
+        #region Drag & Dop
+        class DragData
+       {
+            public DragData(int rowIndex, int columnIndex, string text, DataGridView source)
             {
-                DataGridView.HitTestInfo info = dgvTargetVerse.HitTest(e.X, e.Y);
+                Text = text;
+                Source = source;
+                ColumnIndex = columnIndex;
+                RowIndex= rowIndex;
+            }
+
+            public string Text { get; private set; }
+            public DataGridView Source { get; private set; }
+            public int ColumnIndex { get; private set; }
+            public int RowIndex { get; private set; }
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void DgvReferenceVerse_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.Clicks == 1)
+            {
+                DataGridView.HitTestInfo info = dgvReferenceVerse.HitTest(e.X, e.Y);
                 if (info.RowIndex >= 0)
                 {
                     if (info.RowIndex >= 0 && info.ColumnIndex >= 0)
                     {
-                        string text = (String)
-                               dgvTargetVerse.Rows[info.RowIndex].Cells[info.ColumnIndex].Value;
+                        string text = (String) dgvReferenceVerse.Rows[1].Cells[info.ColumnIndex].Value;
+                        DragData data = new DragData(1, info.ColumnIndex, text.Trim(), dgvReferenceVerse);
                         if (text != null)
                         {
-                            dgvTargetVerse[info.ColumnIndex, info.RowIndex].Value = "";
                             //Need to put braces here  CHANGE
-                            dgvTargetVerse.DoDragDrop(text, DragDropEffects.Copy);
+                            dgvReferenceVerse.DoDragDrop(data, DragDropEffects.Copy);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DgvTOTHTView_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.Clicks == 1)
+            {
+                DataGridView.HitTestInfo info = dgvTOTHTView.HitTest(e.X, e.Y);
+                if (info.RowIndex >= 0)
+                {
+                    if (info.RowIndex >= 0 && info.ColumnIndex >= 0)
+                    {
+                        string text = ((String)dgvTOTHTView.Rows[3].Cells[info.ColumnIndex].Value).Trim();
+                        DragData data = new DragData(1, info.ColumnIndex, text, dgvTOTHTView);
+                        if (text != null)
+                        {
+                            //Need to put braces here  CHANGE
+                            dgvTOTHTView.DoDragDrop(data, DragDropEffects.Copy);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DgvTargetVerse_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left && e.Clicks == 1)
+            {
+                DataGridView.HitTestInfo info = dgvTargetVerse.HitTest(e.X, e.Y);
+                if (info.RowIndex > 0)
+                {
+                    if (info.RowIndex >= 0 && info.ColumnIndex >= 0)
+                    {
+                        string text = (String)dgvTargetVerse.Rows[1].Cells[info.ColumnIndex].Value;
+                        DragData data = new DragData(1, info.ColumnIndex, text, dgvTargetVerse);
+                        if (text != null)
+                        {
+                            //Need to put braces here  CHANGE
+                            dgvTargetVerse.DoDragDrop(data, DragDropEffects.Copy);
                         }
                     }
                 }
@@ -703,27 +788,50 @@ namespace BibleTaggingUtil
 
         private void DgvTargetVerse_DragDrop(object sender, DragEventArgs e)
         {
-            string newValue = e.Data.GetData(typeof(string)) as string;
+            DragData data = e.Data.GetData(typeof(DragData)) as DragData;
+            string newValue = data.Text;
             Point cursorLocation = dgvTargetVerse.PointToClient(new Point(e.X, e.Y));
 
             System.Windows.Forms.DataGridView.HitTestInfo hittest = dgvTargetVerse.HitTest(cursorLocation.X, cursorLocation.Y);
             if (hittest.ColumnIndex != -1
                 && hittest.RowIndex != -1)
             {  //CHANGE
-                newValue = newValue.Trim().Replace("<","").Replace(">", "");
-                newValue = "0000" + newValue;
-                newValue = "<" + newValue.Substring(newValue.Length - 4) + ">";
+                if (data.Source.Equals(dgvTargetVerse)) 
+                {
+                    if (data.ColumnIndex == hittest.ColumnIndex)
+                        return;
+                }
+                newValue = newValue.Replace("+G", "> <");
+                string[] strings= newValue.Split(' ');
+                newValue = string.Empty;
                 string currentText = (string)dgvTargetVerse[hittest.ColumnIndex, 1].Value;
                 if (!string.IsNullOrEmpty(currentText) && !currentText.Contains("???"))
+                    newValue = currentText;
+                for (int i = 0; i < strings.Length; i++)
                 {
-                    newValue = currentText + " " + newValue;
+                    string tmp = strings[i].Trim().Replace("<", "").Replace(">", "");
+                    tmp = ("0000" + tmp).Substring(tmp.Length);
+                    int val = Convert.ToInt32(tmp);
+                    if (val > 0)
+                    {
+                        tmp = "<" + tmp + ">";
+                        newValue += string.IsNullOrEmpty(newValue) ? tmp : (" " + tmp); 
+                    }
                 }
                 dgvTargetVerse[hittest.ColumnIndex, 1].Value = newValue.Trim();
+
+                if (data.Source.Equals(dgvTargetVerse))
+                {
+                    dgvTargetVerse[data.ColumnIndex, 1].Value = string.Empty;
+                }
+
+                dgvTargetVerse.ClearSelection();
 
                 dgvTargetVerse.Rows[0].ReadOnly = true;
             }
         }
 
+        #endregion Drag & Dop
 
         private void TbTargetBible_DoubleClick(object sender, System.EventArgs e)
         {

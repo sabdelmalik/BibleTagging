@@ -981,6 +981,7 @@ namespace BibleTaggingUtil
                 process.StartInfo.FileName = executable;
                 process.StartInfo.Arguments = targetFolder + " " + xmlFile + " -v NRSV -b 4 -z";
                 process.Start();
+                while (!process.HasExited) ;
 
                 MessageBox.Show("Bible Generation completed!");
 

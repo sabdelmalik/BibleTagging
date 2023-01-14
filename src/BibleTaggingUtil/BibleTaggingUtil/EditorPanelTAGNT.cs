@@ -34,6 +34,8 @@ namespace BibleTaggingUtil
             dgvTOTHTView.Rows.Add(transliteration.ToArray());
             dgvTOTHTView.Rows.Add(tags.ToArray());
 
+            dgvReferenceVerse.ClearSelection();
+
             dgvReferenceVerse.Rows[0].ReadOnly = true;
             dgvReferenceVerse.Rows[1].ReadOnly = true;
 

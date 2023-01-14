@@ -115,7 +115,7 @@ namespace BibleTaggingUtil
             if (col >= 0)
                 dgvTargetVerse.CurrentCell = dgvTargetVerse.Rows[1].Cells[col];
 
-
+            dgvTargetVerse.ClearSelection();
 
             dgvTargetVerse.Rows[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvTargetVerse.Rows[0].ReadOnly = true;
@@ -147,6 +147,9 @@ namespace BibleTaggingUtil
                     dgvTargetVerse.Columns[i].DisplayIndex = verseParts.Length - i - 1;
                 }
             }
+
+            dgvTargetVerse.ClearSelection();
+
             dgvTargetVerse.Rows[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
 
             dgvTargetVerse.Rows[0].ReadOnly = true;
