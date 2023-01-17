@@ -137,60 +137,73 @@ namespace BibleTaggingUtil
         }
 
         private void LoadBibles()
-        { 
-            string biblesFolder = Properties.Settings.Default.BiblesFolder;
-            if (string.IsNullOrEmpty(biblesFolder) && !Directory.Exists(biblesFolder))
-            {
-                biblesFolder = GetBiblesFolder();
-                if (string.IsNullOrEmpty(biblesFolder))
-                {
-                    this.Close();
-                    return;
-                }
-            }
+        {
+            bool taggedBibleOk = false;
+            bool untaggedBibleOk = false;
+            string taggedFolder = string.Empty;
 
-            string confResult = config.ReadBiblesConfig(biblesFolder);
-            if (!string.IsNullOrEmpty(confResult))
+            string biblesFolder = Properties.Settings.Default.BiblesFolder;
+
+            while (true)
             {
-                MessageBox.Show(confResult);
-                biblesFolder = GetBiblesFolder();
-                if (string.IsNullOrEmpty(biblesFolder))
+                if (string.IsNullOrEmpty(biblesFolder) && !Directory.Exists(biblesFolder))
                 {
-                    this.Close();
-                    return;
-                }
-                else
-                {
-                    confResult = config.ReadBiblesConfig(biblesFolder);
-                    if (!string.IsNullOrEmpty(confResult))
+                    biblesFolder = GetBiblesFolder();
+                    if (string.IsNullOrEmpty(biblesFolder))
                     {
-                        MessageBox.Show(confResult);
                         this.Close();
                         return;
                     }
                 }
 
+                string confResult = config.ReadBiblesConfig(biblesFolder);
+                if (!string.IsNullOrEmpty(confResult))
+                {
+                    MessageBox.Show(confResult);
+                    biblesFolder = GetBiblesFolder();
+                    if (string.IsNullOrEmpty(biblesFolder))
+                    {
+                        this.Close();
+                        return;
+                    }
+                    else
+                    {
+                        confResult = config.ReadBiblesConfig(biblesFolder);
+                        if (!string.IsNullOrEmpty(confResult))
+                        {
+                            MessageBox.Show(confResult);
+                            this.Close();
+                            return;
+                        }
+                    }
+                }
 
+                taggedFolder = Path.GetDirectoryName(config.TaggedBible);
+
+                if (!string.IsNullOrEmpty(config.UnTaggedBible) && File.Exists(config.UnTaggedBible))
+                {
+                    untaggedBibleOk = true;
+                }
+
+                if (!Directory.Exists(taggedFolder))
+                {
+                    DialogResult res = MessageBox.Show("Tagged folder does not exist\r\nSelect another Bible Folder?", "Error!", MessageBoxButtons.YesNo);
+                    if (res == DialogResult.Yes)
+                    {
+                        biblesFolder = string.Empty;
+                    }
+                    else
+                    {
+                        this.Close();
+                        return;
+                    }
+                }
+                else
+                {
+                    break;
+                }
             }
-
-
             this.Closing += BibleTaggingForm_Closing;
-
-            bool taggedBibleOk = false;
-            bool untaggedBibleOk = false;
-            string taggedFolder = Path.GetDirectoryName(config.TaggedBible);
-
-            if (!string.IsNullOrEmpty(config.UnTaggedBible) && File.Exists(config.UnTaggedBible))
-            {
-                untaggedBibleOk = true;
-            }
-
-            if(!Directory.Exists(taggedFolder))
-            {
-                MessageBox.Show("Tagged folder does not exist");
-                this.Close();
-                return;
-            }
 
             if ((Directory.GetFiles(taggedFolder).Length == 1))
             {

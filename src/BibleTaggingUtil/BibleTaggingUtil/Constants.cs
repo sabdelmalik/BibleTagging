@@ -78,6 +78,10 @@ namespace BibleTaggingUtil
             "66-Revelation"
         };
 
+        /// <summary>
+        /// Bible reference abbreviations as defined by CrossWire Bible Society
+        /// in the OSIS (Open Scriptural Information Standard) specs
+        /// </summary>
         public static string[] osisNames =
         {
             "Gen",
@@ -148,8 +152,81 @@ namespace BibleTaggingUtil
             "Rev"
         };
 
+        /// <summary>
+        /// American Bible Society & Paratext abbreviations
+        /// </summary>
+        public static string[] ubsNames =
+        {
+        "Gen",
+        "Exo",
+        "Lev",
+        "Num",
+        "Deu",
+        "Jos",
+        "Jdg",
+        "Rut",
+        "1Sa",
+        "2Sa",
+        "1Ki",
+        "2Ki",
+        "1Ch",
+        "2Ch",
+        "Ezr",
+        "Neh",
+        "Est",
+        "Job",
+        "Psa",
+        "Pro",
+        "Ecc",
+        "Sng",
+        "Isa",
+        "Jer",
+        "Lam",
+        "Ezk",
+        "Dan",
+        "Hos",
+        "Jol",
+        "Amo",
+        "Oba",
+        "Jon",
+        "Mic",
+        "Nam",
+        "Hab",
+        "Zep",
+        "Hag",
+        "Zec",
+        "Mal",
+        "Mat",
+        "Mrk",
+        "Luk",
+        "Jhn",
+        "Act",
+        "Rom",
+        "1Co",
+        "2Co",
+        "Gal",
+        "Eph",
+        "Php",
+        "Col",
+        "1Th",
+        "2Th",
+        "1Ti",
+        "2Ti",
+        "Tit",
+        "Phm",
+        "Heb",
+        "Jas",
+        "1Pe",
+        "2Pe",
+        "1Jn",
+        "2Jn",
+        "3Jn",
+        "Jud",
+        "Rev"
+        };
+
         public static string[] osisAltNames =
-{
+        {
             "Gen",
             "Exo",
             "Lev",

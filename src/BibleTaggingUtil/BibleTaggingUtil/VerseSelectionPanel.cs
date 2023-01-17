@@ -14,7 +14,10 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace BibleTaggingUtil
 {
-
+    /// <summary>
+    /// This Form displays three list boxes for selecting Bible book, chapter and verse
+    /// Any change in the selection in any of the boxes causes a VerseChanged event to fire.
+    /// </summary>
     public partial class VerseSelectionPanel : DockContent
     {
         private Dictionary<string, BibleBook> bibleBooks = new Dictionary<string, BibleBook>();
