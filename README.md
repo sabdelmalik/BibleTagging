@@ -8,5 +8,5 @@ This project was started to specifically tag Smith & Van Dyck Arabic Bible trans
 
 Refer to **./docs/From-VPL-Bible-to-tagged-SWORD-module.docx** in this repository for details.
 <p>
-Refer to [**From-VPL-Bible-to-tagged-SWORD-module**](./docs/From-VPL-Bible-to-tagged-SWORD-module.docx) document in this repository for details.
+Refer to [**From-VPL-Bible-to-tagged-SWORD-module**](https://github.com/sabdelmalik/BibleTagging/blob/main/docs/From-VPL-Bible-to-tagged-SWOR-module.docx) document in this repository for details.
 </p>
