@@ -1,4 +1,4 @@
-# BibleTagging
+# Bible Tagging
 This project was started to specifically tag Smith & Van Dyck Arabic Bible translation with Strong’s numbers. However, the process used can be applied to virtually any Bible. It was recently applied to a Zokam (Burmese) Bible.
 # Process Summary
 1.	The Bible text is provided in a Verse Per Line  (VPL) format.
