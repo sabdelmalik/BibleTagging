@@ -7,5 +7,5 @@ This project was started to specifically tag Smith & Van Dyck Arabic Bible trans
 4.	As a last step, the mapped text is converted to [OSIS](http://crosswire.org/osis/) format from which a [SWORD module](https://www.crosswire.org/sword/develop/swordmodule/) can be created. SWORD modules are used by many Bible study tools.
 
 
-Refer to [**From-VPL-Bible-to-tagged-SWORD-module**](./docs/From-VPL-Bible-to-tagged-SWORD-module.docx) in this repository for details.
+Refer to [**From-VPL-Bible-to-tagged-SWORD-module**](.//docs/From-VPL-Bible-to-tagged-SWOR-module.docx) in this repository for details.
 
