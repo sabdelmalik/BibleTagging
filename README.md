@@ -6,4 +6,4 @@ This project was started to specifically tag Smith & Van Dyck Arabic Bible trans
 3.	Using a publicly available software, [Berkely Aligner](https://github.com/mhajiloo/berkeleyaligner), to map the text Strong’s number. The process is not perfect, but has around 70% accuracy (which can vary between languages). 
 4.	As a last step, the mapped text is converted to [OSIS](http://crosswire.org/osis/) format from which a [SWORD module](https://www.crosswire.org/sword/develop/swordmodule/) can be created. SWORD modules are used by many Bible study tools.
 <br>
-Refer to [From VPL Bible to tagged SWORD module](./docs/) for details.
+Refer to ./docs/From VPL Bible to tagged SWORD module.docx for details.
