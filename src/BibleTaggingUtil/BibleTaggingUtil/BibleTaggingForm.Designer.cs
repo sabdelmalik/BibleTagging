@@ -44,9 +44,12 @@ namespace BibleTaggingUtil
             this.saveKJVPlainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveHebrewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.nextVerseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generateSWORDFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.usfmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generateUSFMFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.convertUSFMToOSISToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog3 = new System.Windows.Forms.FolderBrowserDialog();
-            this.generateSWORDFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -76,7 +79,8 @@ namespace BibleTaggingUtil
             this.saveKJVPlainToolStripMenuItem,
             this.saveHebrewToolStripMenuItem,
             this.nextVerseToolStripMenuItem,
-            this.generateSWORDFilesToolStripMenuItem});
+            this.generateSWORDFilesToolStripMenuItem,
+            this.usfmToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1060, 28);
@@ -140,16 +144,39 @@ namespace BibleTaggingUtil
             this.nextVerseToolStripMenuItem.Text = "Next ??? verse";
             this.nextVerseToolStripMenuItem.Click += new System.EventHandler(this.nextVerseToolStripMenuItem_Click);
             // 
-            // openFileDialog
-            // 
-            this.openFileDialog.FileName = "openFileDialog1";
-            // 
             // generateSWORDFilesToolStripMenuItem
             // 
             this.generateSWORDFilesToolStripMenuItem.Name = "generateSWORDFilesToolStripMenuItem";
-            this.generateSWORDFilesToolStripMenuItem.Size = new System.Drawing.Size(118, 24);
+            this.generateSWORDFilesToolStripMenuItem.Size = new System.Drawing.Size(173, 24);
             this.generateSWORDFilesToolStripMenuItem.Text = "Generate SWORD Files";
             this.generateSWORDFilesToolStripMenuItem.Click += new System.EventHandler(this.generateSWORDFilesToolStripMenuItem_Click);
+            // 
+            // usfmToolStripMenuItem
+            // 
+            this.usfmToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.generateUSFMFilesToolStripMenuItem,
+            this.convertUSFMToOSISToolStripMenuItem});
+            this.usfmToolStripMenuItem.Name = "usfmToolStripMenuItem";
+            this.usfmToolStripMenuItem.Size = new System.Drawing.Size(61, 24);
+            this.usfmToolStripMenuItem.Text = "USFM";
+            // 
+            // generateUSFMFilesToolStripMenuItem
+            // 
+            this.generateUSFMFilesToolStripMenuItem.Name = "generateUSFMFilesToolStripMenuItem";
+            this.generateUSFMFilesToolStripMenuItem.Size = new System.Drawing.Size(238, 26);
+            this.generateUSFMFilesToolStripMenuItem.Text = "Generate USFM Files";
+            this.generateUSFMFilesToolStripMenuItem.Click += new System.EventHandler(this.generateUSFMFilesToolStripMenuItem_Click);
+            // 
+            // convertUSFMToOSISToolStripMenuItem
+            // 
+            this.convertUSFMToOSISToolStripMenuItem.Name = "convertUSFMToOSISToolStripMenuItem";
+            this.convertUSFMToOSISToolStripMenuItem.Size = new System.Drawing.Size(238, 26);
+            this.convertUSFMToOSISToolStripMenuItem.Text = "Convert USFM to OSIS";
+            this.convertUSFMToOSISToolStripMenuItem.Click += new System.EventHandler(this.convertUSFMToOSISToolStripMenuItem_Click);
+            // 
+            // openFileDialog
+            // 
+            this.openFileDialog.FileName = "openFileDialog1";
             // 
             // BibleTaggingForm
             // 
@@ -161,7 +188,7 @@ namespace BibleTaggingUtil
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "BibleTaggingForm";
-            this.Text = "Bible Tagging";
+            this.Text = "Bible Tagging V3";
             this.Load += new System.EventHandler(this.BibleTaggingForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -191,6 +218,9 @@ namespace BibleTaggingUtil
         private System.Windows.Forms.ToolStripMenuItem nextVerseToolStripMenuItem;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog3;
         private System.Windows.Forms.ToolStripMenuItem generateSWORDFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem usfmToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem generateUSFMFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem convertUSFMToOSISToolStripMenuItem;
     }
 }
 

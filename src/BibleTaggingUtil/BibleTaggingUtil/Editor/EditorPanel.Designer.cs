@@ -1,5 +1,5 @@
 ﻿
-namespace BibleTaggingUtil
+namespace BibleTaggingUtil.Editor
 {
     partial class EditorPanel
     {

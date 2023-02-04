@@ -14,15 +14,19 @@ namespace BibleTaggingUtil
 
         private enum ParseState
         {
-            None,
-            Tagging,
+            NONE,
+            TAGGING,
             OSIS,
+            USFM,
+            USFM2OSIS
         }
         public ConfigurationHolder()
         {
             HebrewReferences = new List<string>();
             GreekReferences = new List<string>();
             OSIS = new Dictionary<string, string>();
+            USFM = new Dictionary<string, string>();
+            USFM2OSIS = new Dictionary<string, string>();
         }
 
         /// <summary>
@@ -38,7 +42,7 @@ namespace BibleTaggingUtil
 
             Properties.Settings.Default.TargetTextDirection = "LTR";
 
-            ParseState state = ParseState.None;
+            ParseState state = ParseState.NONE;
             using (StreamReader sr = new StreamReader(configFilePath))
             {
                 while (sr.Peek() >= 0)
@@ -56,14 +60,18 @@ namespace BibleTaggingUtil
                         switch (section.ToLower())
                         {
                             case "tagging":
-                                state= ParseState.Tagging; break;
+                                state= ParseState.TAGGING; break;
                             case "osis":
                                 state= ParseState.OSIS; break;
+                            case "usfm":
+                                state = ParseState.USFM; break;
+                            case "usfm2osis":
+                                state = ParseState.USFM2OSIS; break;
                         }
                         continue;
                     }
 
-                    if (state == ParseState.Tagging)
+                    if (state == ParseState.TAGGING)
                     {
                         string[] parts = line.Split('=');
                         if (parts.Length != 2)
@@ -103,10 +111,23 @@ namespace BibleTaggingUtil
                                 break;
                         }
                     }
+
                     else if(state == ParseState.OSIS)
                     {
                         string[] lineParts = line.Split('=');
                         OSIS[lineParts[0]] = lineParts[1];
+                    }
+
+                    else if (state == ParseState.USFM)
+                    {
+                        string[] lineParts = line.Split('=');
+                        USFM[lineParts[0]] = lineParts[1];
+                    }
+
+                   else if (state == ParseState.USFM2OSIS)
+                    {
+                        string[] lineParts = line.Split('=');
+                        USFM2OSIS[lineParts[0]] = lineParts[1];
                     }
 
                 }
@@ -122,8 +143,11 @@ namespace BibleTaggingUtil
         public List<string> GreekReferences { get; private set; }
 
         public Dictionary<string, string> OSIS { get; private set; }
+        public Dictionary<string, string> USFM { get; private set; }
+        public Dictionary<string, string> USFM2OSIS { get; private set; }
 
-}
+
+    }
 
 
 }

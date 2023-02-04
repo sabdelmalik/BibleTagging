@@ -11,16 +11,16 @@
     <Compile Update="DummyDoc.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="EditorPanel.cs">
+    <Compile Update="Editor\EditorPanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="EditorPanelTAGNT.cs">
+    <Compile Update="Editor\EditorPanelTAGNT.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="EditorPanelTarget.cs">
+    <Compile Update="Editor\EditorPanelTarget.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="EditorPanelTOTHT.cs">
+    <Compile Update="Editor\EditorPanelTOTHT.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="SettingsForm.cs">

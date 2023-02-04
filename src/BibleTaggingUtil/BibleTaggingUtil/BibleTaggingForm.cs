@@ -19,6 +19,10 @@ using Microsoft.VisualBasic.ApplicationServices;
 using Microsoft.VisualBasic;
 using System.Diagnostics;
 
+using BibleTaggingUtil.Editor;
+using SM.Bible.Formats.USFM;
+using SM.Bible.Formats.OSIS;
+
 namespace BibleTaggingUtil
 {
     public enum VersionToLoad
@@ -56,14 +60,14 @@ namespace BibleTaggingUtil
             dockPanel.DocumentStyle = DocumentStyle.DockingWindow;
             m_deserializeDockContent = new DeserializeDockContent(GetContentFromPersistString);
 
-            if(!dev)
-            {
-                nextVerseToolStripMenuItem.Visible = false;
-                saveHebrewToolStripMenuItem.Visible = false;
-                saveKJVPlainToolStripMenuItem.Visible = false;
-                settingsToolStripMenuItem.Visible = false;  
-            }
+#if ! DEBUG
+            nextVerseToolStripMenuItem.Visible = false;
+            saveHebrewToolStripMenuItem.Visible = false;
+            saveKJVPlainToolStripMenuItem.Visible = false;
+            settingsToolStripMenuItem.Visible = false;  
+#endif        
         }
+
 
 
         #region Form Events
@@ -1003,6 +1007,18 @@ namespace BibleTaggingUtil
             {
                 MessageBox.Show("Bible Generation Failed \r\n" + ex);
             }
+        }
+
+        private void generateUSFMFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            USFM_Generator generator = new USFM_Generator(this, config);
+                generator.Generate();
+        }
+
+        private void convertUSFMToOSISToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            USFM2OSIS usfm2osis = new USFM2OSIS(this, config);
+            usfm2osis.Convert();
         }
     }
 }

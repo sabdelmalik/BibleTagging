@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 using WeifenLuo.WinFormsUI.Docking;
 
-namespace BibleTaggingUtil
+namespace BibleTaggingUtil.Editor
 {
     public partial class EditorPanel : DockContent
     {
@@ -553,7 +553,7 @@ namespace BibleTaggingUtil
                 {
                     string newText = (string)dgvTargetVerse.Rows[0].Cells[columnIndex].Value;
                     string newTag = (string)dgvTargetVerse.Rows[1].Cells[columnIndex].Value;
-                    if (newTag.Contains("???")) newTag = string.Empty;
+                    if (string.IsNullOrEmpty(newTag) || newTag.Contains("???")) newTag = string.Empty;
                     if (columnIndex == firstMergeIndex)
                     {
                         for (int j = 1; j < dgvTargetVerse.SelectedCells.Count; j++)
@@ -561,7 +561,7 @@ namespace BibleTaggingUtil
                             columnIndex += 1;
                             newText += " " + (string)dgvTargetVerse.Rows[0].Cells[columnIndex].Value;
                             string currentTag = (string)dgvTargetVerse.Rows[1].Cells[columnIndex].Value;
-                            if (!currentTag.Contains("???"))
+                            if (!string.IsNullOrEmpty(currentTag) && !currentTag.Contains("???"))
                                 newTag += " " + currentTag;
                         }
                     }
