@@ -318,16 +318,22 @@ namespace BibleTaggingUtil
                         // this is a new word
                         if (tags.Count > 0)
                         {
-                            if (tags.Count == 1 && tags[0] == "")
+                            if (tags.Count == 1 && tags[0] == "" || tags[0].Contains("???"))
                                 words.Add(string.Format("<w>{0}</w>", word));
                             else
                             {
-                                string strongStr = string.Format("strong:{0}{1}", strongPrefix, tags[0]);
+                                string strongStr = string.Empty;
+                                if(tags[0] != "<>" && !tags[0].Contains("???"))
+                                     strongStr = string.Format("strong:{0}{1}", strongPrefix, tags[0]);
                                 for (int j = 1; j < tags.Count; j++)
                                 {
-                                    strongStr += string.Format(" strong:{0}{1}", strongPrefix, tags[j]);
+                                    if (tags[j] != "<>" && !tags[j].Contains("???"))
+                                        strongStr += string.Format(" strong:{0}{1}", strongPrefix, tags[j]);
                                 }
-                                words.Add(string.Format("<w lemma=\"{0}\">{1}</w>", strongStr, word));
+                                if (string.IsNullOrEmpty(strongStr))
+                                    words.Add(string.Format("<w>{0}</w>", word));
+                                else
+                                    words.Add(string.Format("<w lemma=\"{0}\">{1}</w>", strongStr, word));
 
                             }
                             word = string.Empty;

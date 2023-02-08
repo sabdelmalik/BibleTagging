@@ -66,6 +66,10 @@ namespace SM.Bible.Formats.USFM
                 USFM_Entry entry = bible[usbName.ToUpper()][map.Index];
                 string usfmText = entry.Text;
 
+                if(usbName.ToUpper() == "1CO" )// && entry.Marker == "\\c" && entry.Number == 16)
+                {
+                    int x = 0;
+                }
                 entry.Text = MergeVerse(taggedText, usfmText, bookIndex);
 
             }
@@ -86,14 +90,19 @@ namespace SM.Bible.Formats.USFM
             {
                 if (!string.IsNullOrEmpty(verseParts[i]) && verseParts[i][0] != '<' && verseParts[i][0] != '(')
                 {
+                    // This is a word
+                    // was tag pending?
                     if (!string.IsNullOrEmpty(tmpTag))
                     {
-                        if (tmpTag == "<>")
+                        // yes there was a tag, check if it should be empty.
+                        if (tmpTag == "<>" || tmpTag.Contains("???"))
                             tmpTag = string.Empty;
-                        tags.Add(tmpTag);
+                        tags.Add(tmpTag);                        
                     }
                     tmpTag = string.Empty;
-                    tempWord += (string.IsNullOrEmpty(tempWord)) ? verseParts[i].Replace(":«", ": «") : (" " + verseParts[i].Replace(":«", ": «"));
+
+                    // now add the word
+                    tempWord += (string.IsNullOrEmpty(tempWord)) ? verseParts[i] : (" " + verseParts[i]);
                     if (i == verseParts.Length - 1)
                     {
                         // last word
@@ -102,10 +111,13 @@ namespace SM.Bible.Formats.USFM
                 }
                 else
                 {
+                    // this is a tag
+                    // was a word pending?
                     if (!string.IsNullOrEmpty(tempWord))
                         words.Add(tempWord);
                     tempWord = string.Empty;
-                    if (verseParts[i] == "<>")
+
+                    if (verseParts[i] == "<>" || tmpTag.Contains("???"))
                     {
                         tmpTag = "<>";
                     }
@@ -118,12 +130,21 @@ namespace SM.Bible.Formats.USFM
                             // last word
                             if (tmpTag.EndsWith('.'))
                                 tmpTag.Remove(tmpTag.Length - 1, 1);
+
+                            if (tmpTag == "<>" || tmpTag.Contains("???"))
+                                tmpTag = string.Empty;
+
                             tags.Add(tmpTag);
                         }
                     }
                 }
             }
 
+            String prfx = (bookIndex > 38) ? "G" : "H";
+            for (int i = 0; i < tags.Count; i++)
+            {
+                tags[i] = tags[i].Replace("<", prfx).Replace(">", "");
+            }
 
             // \v 1 \w فِي الْبَدْءِ|strong="H7225"\w* \w خَلَقَ|strong="H1254"\w* \w اللهُ|strong="H0430"\w* \w السَّمَاوَاتِ|strong="H8064"\w* \w وَالأَرْضَ|strong="H0776"\w*. 
             for (int i = 0; i < words.Count; i++)
@@ -131,7 +152,7 @@ namespace SM.Bible.Formats.USFM
                 if (i >= tags.Count || string.IsNullOrEmpty(tags[i]))
                     result += string.Format(" \\w {0}\\w*", words[i]);
                 else
-                    result += string.Format(" \\w {0}|strong=\"{2}{1}\"\\w*", words[i], tags[i].Replace("<","").Replace(">",""), (bookIndex > 38) ? "G" : "H");
+                    result += string.Format(" \\w {0}|strong=\"{1}\"\\w*", words[i], tags[i]);
             }
     
             return result.Trim();
@@ -139,7 +160,7 @@ namespace SM.Bible.Formats.USFM
 
         private void ReadUSFM()
         {
-            string usfmRefFolder = Path.Combine(BibleTaggingUtil.Properties.Settings.Default.BiblesFolder, usfmConf["usfmRefFolder"]);
+            string usfmRefFolder = Path.Combine(BibleTaggingUtil.Properties.Settings.Default.BiblesFolder, usfmConf[UsfmConstants.usfmRefFolder]);
             string[] files = Directory.GetFiles(usfmRefFolder, "*.usfm");
             foreach (string file in files)
             {
@@ -158,7 +179,14 @@ namespace SM.Bible.Formats.USFM
                 {
                     string? line = sr.ReadLine();
                     if (line is not null)
+                    {
+                        if (file.Contains("20-PSAarb-vd") && line.Contains("c 119"))
+                        {
+                            int x = 0;
+                        }
+
                         ParseLine(line.Trim(), book);
+                    }
                 }
 
               if (!string.IsNullOrEmpty(currentBook) && !bible.ContainsKey(currentBook))
@@ -206,6 +234,8 @@ namespace SM.Bible.Formats.USFM
                 case @"\usfm":
                 case @"\ide":
                 case @"\h":
+                case @"\qa":
+                case @"\cl":
                 case @"\p":
                     if (space1 >= 0 && line.Length > space1 + 1)
                         entry.Text = line.Substring(space1 + 1);
@@ -248,7 +278,7 @@ namespace SM.Bible.Formats.USFM
 
         public void SaveUSFMBible()
         {
-            string usfmOutFolder = Path.Combine(BibleTaggingUtil.Properties.Settings.Default.BiblesFolder, usfmConf["usfmOutFolder"]);
+            string usfmOutFolder = Path.Combine(BibleTaggingUtil.Properties.Settings.Default.BiblesFolder, usfmConf[UsfmConstants.usfmOutFolder]);
             if (!Directory.Exists(usfmOutFolder))
             {
                 Directory.CreateDirectory(usfmOutFolder);
@@ -269,12 +299,12 @@ namespace SM.Bible.Formats.USFM
                     string fileNamePrefix = Constants.usfmFileNamePrefixes[Array.IndexOf(Constants.ubsNames, code)];
                     fileName = string.Format("{0}{1}-{2}.{3}",
                                         fileNamePrefix.ToUpper(),
-                                        usfmConf["usfmLang"].ToLower(),
-                                        usfmConf["usfmId"].ToLower(),
-                                        usfmConf["fileExtension"]);
+                                        usfmConf[UsfmConstants.usfmLang].ToLower(),
+                                        usfmConf[UsfmConstants.usfmId].ToLower(),
+                                        usfmConf[UsfmConstants.fileExtension]);
                 }
 
-                id.Text = fileName + ", " + usfmConf["versionTitle"];
+                id.Text = fileName + ", " + usfmConf[UsfmConstants.versionTitle];
 
                 if(string.IsNullOrEmpty(fileName))
                 {

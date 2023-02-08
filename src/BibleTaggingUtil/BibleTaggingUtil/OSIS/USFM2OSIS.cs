@@ -46,16 +46,16 @@ namespace SM.Bible.Formats.OSIS
         public USFM2OSIS(BibleTaggingForm parent, ConfigurationHolder config)
         {
             this.usfm2osisConf = config.USFM2OSIS;
-            osisWork = usfm2osisConf["osisIDWork"];
-            osis_filename = Path.Combine(BibleTaggingUtil.Properties.Settings.Default.BiblesFolder, usfm2osisConf["outputFileName"]);
-            lang_code = usfm2osisConf["language"];
+            osisWork = usfm2osisConf[Usfm2OsisConstants.osisIDWork];
+            osis_filename = Path.Combine(BibleTaggingUtil.Properties.Settings.Default.BiblesFolder, usfm2osisConf[Usfm2OsisConstants.outputFileName]);
+            lang_code = usfm2osisConf[Usfm2OsisConstants.language];
         }
 
         public void Convert()
         {
             osisSegment = new Dictionary<string, string>(); 
             
-            string folder = Path.Combine(BibleTaggingUtil.Properties.Settings.Default.BiblesFolder, usfm2osisConf["usfmSourceFolder"]);
+            string folder = Path.Combine(BibleTaggingUtil.Properties.Settings.Default.BiblesFolder, usfm2osisConf[Usfm2OsisConstants.usfmSourceFolder]);
             string[] docs = Directory.GetFiles(folder, "*.usfm");
             
             foreach (string doc in docs)

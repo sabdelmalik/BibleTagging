@@ -4,6 +4,12 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+    <Authors>Sami Abdel Malik</Authors>
+    <Copyright>Copyright © 2023 by Sami Abdel Malik</Copyright>
+    <RepositoryUrl>https://github.com/sabdelmalik/BibleTagging</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Version>4.0.0</Version>
+    <Title>Bible Text Tagging with Strong's Numbers</Title>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

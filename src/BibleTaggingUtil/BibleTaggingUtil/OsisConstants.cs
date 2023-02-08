@@ -6,6 +6,25 @@ using System.Threading.Tasks;
 
 namespace BibleTaggingUtil
 {
+    internal class UsfmConstants
+    {
+        public const string versionTitle = "versionTitle";
+        public const string usfmRefFolder = "usfmRefFolder";
+        public const string usfmOutFolder = "usfmOutFolder";
+        public const string fileExtension = "fileExtension";
+        public const string usfmLang = "usfmLang";
+        public const string usfmId = "usfmId";
+    }
+
+    internal class Usfm2OsisConstants
+    {
+        public const string usfmSourceFolder = "usfmSourceFolder";
+        public const string osisIDWork = "osisIDWork";
+        public const string outputFileName = "outputFileName";
+        public const string language = "language";
+
+    }
+
     internal class OsisConstants
     {
         public const string osisIDWork = "osisIDWork";

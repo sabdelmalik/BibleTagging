@@ -500,8 +500,6 @@ namespace BibleTaggingUtil.Editor
                     dgvTargetVerse.ContextMenuStrip.Items.Clear();
 
                     dgvTargetVerse.ContextMenuStrip.Items.Clear();
-                    ToolStripMenuItem deleteMenuItem = new ToolStripMenuItem(DELETE_CONTEXT_MENU);
-                    dgvTargetVerse.ContextMenuStrip.Items.Add(deleteMenuItem);
 
                     string[] strings = text.Split(' ');
                     if (strings.Length > 1)
@@ -515,6 +513,9 @@ namespace BibleTaggingUtil.Editor
                         ToolStripMenuItem deleteRightMenuItem = new ToolStripMenuItem(DELETE_RIGHT_CONTEXT_MENU);
                         dgvTargetVerse.ContextMenuStrip.Items.Add(deleteRightMenuItem);
                     }
+
+                    ToolStripMenuItem deleteMenuItem = new ToolStripMenuItem(DELETE_CONTEXT_MENU);
+                    dgvTargetVerse.ContextMenuStrip.Items.Add(deleteMenuItem);
 
 
                     e.Cancel = false;
@@ -562,7 +563,10 @@ namespace BibleTaggingUtil.Editor
                             newText += " " + (string)dgvTargetVerse.Rows[0].Cells[columnIndex].Value;
                             string currentTag = (string)dgvTargetVerse.Rows[1].Cells[columnIndex].Value;
                             if (!string.IsNullOrEmpty(currentTag) && !currentTag.Contains("???"))
-                                newTag += " " + currentTag;
+                            {
+                                if(!newTag.Contains(currentTag))
+                                    newTag += " " + currentTag;
+                            }
                         }
                     }
 
@@ -636,10 +640,13 @@ namespace BibleTaggingUtil.Editor
                 dgvTargetVerse.ColumnCount = newWords.Length;
                 dgvTargetVerse.Rows.Add(newWords);
                 dgvTargetVerse.Rows.Add(newTags);
-
-                for (int i = 0; i < newWords.Length; i++)
+                string direction = Properties.Settings.Default.TargetTextDirection;
+                if (direction.ToLower() == "rtl")
                 {
-                    dgvTargetVerse.Columns[i].DisplayIndex = newWords.Length - i - 1;
+                    for (int i = 0; i < newWords.Length; i++)
+                    {
+                        dgvTargetVerse.Columns[i].DisplayIndex = newWords.Length - i - 1;
+                    }
                 }
 
                 dgvTargetVerse.ClearSelection();
@@ -815,7 +822,8 @@ namespace BibleTaggingUtil.Editor
                     if (val > 0)
                     {
                         tmp = "<" + tmp + ">";
-                        newValue += string.IsNullOrEmpty(newValue) ? tmp : (" " + tmp); 
+                        if (!newValue.Contains(tmp))
+                            newValue += string.IsNullOrEmpty(newValue) ? tmp : (" " + tmp);
                     }
                 }
                 dgvTargetVerse[hittest.ColumnIndex, 1].Value = newValue.Trim();
