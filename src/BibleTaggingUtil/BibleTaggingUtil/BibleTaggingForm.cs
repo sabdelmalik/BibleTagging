@@ -1246,6 +1246,7 @@ namespace BibleTaggingUtil
 
         private void generateSWORDFilesOsisToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SaveUpdates();
             new Thread(
                 () =>
                 {
@@ -1259,6 +1260,7 @@ namespace BibleTaggingUtil
         #region USFM Menu
         private void generateUSFMFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SaveUpdates();
             new Thread(
                 () =>
                 {
@@ -1297,9 +1299,40 @@ namespace BibleTaggingUtil
             {
                 WaitCursorControl(true);
                 string biblesFolder = Properties.Settings.Default.BiblesFolder;
+                string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string modulesFolder = Path.Combine(appData, "Sword\\modules\\texts\\ztext");
+                string backupFolderName = string.Format("{0:s}_{1:s}", targetFolderName, DateTime.Now.ToString("yyyy_MM_dd_HH_mm"));
+                string backupPath = Path.Combine(biblesFolder, backupFolderName);
+                string targetFolder = Path.Combine(modulesFolder, targetFolderName);
+                if (Directory.Exists(targetFolder))
+                {
+                    // backup currentModule
+                    if(Directory.Exists(backupPath))
+                    {
+                        DialogResult res = MessageBox.Show("Overwrite old backup", "Do you want to overwrite existing Backup folder\r\n" + backupPath, MessageBoxButtons.YesNo);
+                        if (res == DialogResult.Yes)
+                        {
+                            Directory.Delete(backupPath, true);
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    Directory.CreateDirectory(backupPath);
+
+                    // copy targetFolder to backupPath
+                    var allFiles = Directory.GetFiles(targetFolder, "*.*");
+                    foreach (string file in allFiles)
+                    {
+                        File.Copy(file, file.Replace(targetFolder, backupPath));
+                    }
+                                    }
+
+
                 string parentFolder = Directory.GetParent(biblesFolder).FullName;
                 string executable = Path.Combine(parentFolder, "osis2mod.exe");
-                string targetFolder = Path.Combine(biblesFolder, targetFolderName);
+//                string targetFolder = Path.Combine(biblesFolder, targetFolderName);
                 string xmlFile = Path.Combine(biblesFolder, sourceFileName);
                 if (!Directory.Exists(targetFolder))
                 {
