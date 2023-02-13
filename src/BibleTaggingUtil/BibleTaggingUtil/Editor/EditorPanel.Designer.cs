@@ -34,6 +34,7 @@ namespace BibleTaggingUtil.Editor
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.btnEbaleEdit = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.btnDecreseFont = new System.Windows.Forms.Button();
             this.btnIncreasFont = new System.Windows.Forms.Button();
@@ -54,7 +55,6 @@ namespace BibleTaggingUtil.Editor
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.tbReferenceBible = new System.Windows.Forms.ToolStripTextBox();
-            this.btnEbaleEdit = new System.Windows.Forms.Button();
             panel1 = new System.Windows.Forms.Panel();
             panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -90,6 +90,16 @@ namespace BibleTaggingUtil.Editor
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(1299, 72);
             panel1.TabIndex = 8;
+            // 
+            // btnEbaleEdit
+            // 
+            this.btnEbaleEdit.Location = new System.Drawing.Point(1018, 25);
+            this.btnEbaleEdit.Name = "btnEbaleEdit";
+            this.btnEbaleEdit.Size = new System.Drawing.Size(94, 29);
+            this.btnEbaleEdit.TabIndex = 11;
+            this.btnEbaleEdit.Text = "Enable Edit";
+            this.btnEbaleEdit.UseVisualStyleBackColor = true;
+            this.btnEbaleEdit.Click += new System.EventHandler(this.btnEbaleEdit_Click);
             // 
             // label1
             // 
@@ -184,6 +194,7 @@ namespace BibleTaggingUtil.Editor
             this.tbCurrentReference.Size = new System.Drawing.Size(185, 34);
             this.tbCurrentReference.TabIndex = 1;
             this.tbCurrentReference.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.tbCurrentReference.TextChanged += new System.EventHandler(this.tbCurrentReference_TextChanged);
             // 
             // toolStrip1
             // 
@@ -343,16 +354,6 @@ namespace BibleTaggingUtil.Editor
             this.tbReferenceBible.AutoSize = false;
             this.tbReferenceBible.Name = "tbReferenceBible";
             this.tbReferenceBible.Size = new System.Drawing.Size(350, 27);
-            // 
-            // btnEbaleEdit
-            // 
-            this.btnEbaleEdit.Location = new System.Drawing.Point(1018, 25);
-            this.btnEbaleEdit.Name = "btnEbaleEdit";
-            this.btnEbaleEdit.Size = new System.Drawing.Size(94, 29);
-            this.btnEbaleEdit.TabIndex = 11;
-            this.btnEbaleEdit.Text = "Enable Edit";
-            this.btnEbaleEdit.UseVisualStyleBackColor = true;
-            this.btnEbaleEdit.Click += new System.EventHandler(this.btnEbaleEdit_Click);
             // 
             // EditorPanel
             // 

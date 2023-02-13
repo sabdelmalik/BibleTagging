@@ -735,10 +735,9 @@ namespace BibleTaggingUtil.Editor
                     if (info.RowIndex >= 0 && info.ColumnIndex >= 0)
                     {
                         string text = (String) dgvReferenceVerse.Rows[1].Cells[info.ColumnIndex].Value;
-                        DragData data = new DragData(1, info.ColumnIndex, text.Trim(), dgvReferenceVerse);
                         if (text != null)
                         {
-                            //Need to put braces here  CHANGE
+                            DragData data = new DragData(1, info.ColumnIndex, text.Trim(), dgvReferenceVerse);
                             dgvReferenceVerse.DoDragDrop(data, DragDropEffects.Copy);
                         }
                     }
@@ -924,6 +923,11 @@ namespace BibleTaggingUtil.Editor
         private void btnEbaleEdit_Click(object sender, EventArgs e)
         {
             dgvTargetVerse.Rows[0].ReadOnly = false;
+        }
+
+        private void tbCurrentReference_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

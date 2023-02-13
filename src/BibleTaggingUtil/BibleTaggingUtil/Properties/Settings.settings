@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BibleTagging.Properties" GeneratedClassName="Settings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="BibleTaggingUtil.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
     <Setting Name="ReferenceBibleFileName" Type="System.String" Scope="User">
@@ -28,6 +28,9 @@
     </Setting>
     <Setting Name="TargetTextDirection" Type="System.String" Scope="User">
       <Value Profile="(Default)">RTL</Value>
+    </Setting>
+    <Setting Name="PeriodicSaveTime" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
   </Settings>
 </SettingsFile>

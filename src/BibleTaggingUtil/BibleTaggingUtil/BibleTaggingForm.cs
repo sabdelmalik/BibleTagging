@@ -58,6 +58,9 @@ namespace BibleTaggingUtil
         private Dictionary<string, string> targetVersionUpdates = new Dictionary<string, string>();
 
         private ConfigurationHolder config = new ConfigurationHolder();
+
+        System.Timers.Timer saveTimer = null;
+
         public BibleTaggingForm()
         {
             InitializeComponent();
@@ -340,6 +343,8 @@ namespace BibleTaggingUtil
 
             StartGui();
 
+            ActivatePeriodicTimer();
+
             WaitCursorControl(false);
             //verseSelectionPanel.CurrentBook = Properties.Settings.Default.LastBook;
             //verseSelectionPanel.CurrentChapter = Properties.Settings.Default.LastChapter;
@@ -361,6 +366,7 @@ namespace BibleTaggingUtil
                 verseSelectionPanel.CurrentChapter = Properties.Settings.Default.LastChapter;
                 verseSelectionPanel.CurrentVerse = Properties.Settings.Default.LastVerse;
                 verseSelectionPanel.FireVerseChanged();
+                editorPanel.TargetDirty = false;
             }
         }
 
@@ -497,6 +503,8 @@ namespace BibleTaggingUtil
 
         public void SaveUpdates()
         {
+            saveTimer.Stop();
+            saveTimer.Start();  
             if (!editorPanel.TargetDirty)
                 return;
 
@@ -745,12 +753,85 @@ namespace BibleTaggingUtil
         {
             SettingsForm settingsForm = new SettingsForm();
 
-            settingsForm.ShowDialog();
+            int priodicSaveTime = Properties.Settings.Default.PeriodicSaveTime;
+            if(priodicSaveTime > 0)
+            {
+                settingsForm.PeriodicSaveEnabled = true;
+                settingsForm.SavePeriod = priodicSaveTime;
+            }
+            else
+            {
+                settingsForm.PeriodicSaveEnabled = false;
+            }
+            DialogResult result = settingsForm.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                if(settingsForm.PeriodicSaveEnabled)
+                {
+                    Properties.Settings.Default.PeriodicSaveTime = settingsForm.SavePeriod;
+                }
+                else
+                {
+                    Properties.Settings.Default.PeriodicSaveTime = 0;
+                }
+                ActivatePeriodicTimer();
+            }
         }
 
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ActivatePeriodicTimer()
         {
-            SaveUpdates();
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() =>
+                {
+                    ActivatePeriodicTimer();
+                }));
+            }
+            else
+            {
+                int priodicSaveTime = Properties.Settings.Default.PeriodicSaveTime;
+
+                if (saveTimer == null)
+                {
+                    saveTimer = new System.Timers.Timer();
+                    saveTimer.Elapsed += SaveTimer_Elapsed;
+                }
+                if (priodicSaveTime > 0)
+                {
+                    saveTimer.Interval = priodicSaveTime * 60000;
+                    saveTimer.AutoReset = true;
+                    saveTimer.Enabled = true;
+                    saveTimer.Start();
+                }
+                else
+                {
+                    if (saveTimer != null)
+                    {
+                        saveTimer.Stop();
+                        saveTimer.Enabled = false;
+                    }
+                }
+            }
+        }
+
+
+        private void SaveTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            PeriodicSave();
+        }
+
+        private void PeriodicSave()
+        {
+            if(InvokeRequired) {
+                Invoke(new Action(() => 
+                {
+                    PeriodicSave(); 
+                }));
+            }
+            else
+            {
+                SaveUpdates();  
+            }
         }
 
         /// <summary>
@@ -1145,7 +1226,7 @@ namespace BibleTaggingUtil
                     OSIS_Generator generator = new OSIS_Generator(config);
                     generator.Generate();
                     WaitCursorControl(false);
-                    ConvertUsfm2Osis(config.OSIS[OsisConstants.output_file], config.OSIS[OsisConstants.osisIDWork]);
+                    RunOsis2mod(config.OSIS[OsisConstants.output_file], config.OSIS[OsisConstants.osisIDWork]);
                 }).Start();
         }
         #endregion Generate SWORD Files Main Menu
@@ -1168,7 +1249,7 @@ namespace BibleTaggingUtil
             new Thread(
                 () =>
                 {
-                    ConvertUsfm2Osis(config.OSIS[OsisConstants.output_file], config.OSIS[OsisConstants.osisIDWork]);
+                    RunOsis2mod(config.OSIS[OsisConstants.output_file], config.OSIS[OsisConstants.osisIDWork]);
                 }).Start();
         }
 
@@ -1203,14 +1284,14 @@ namespace BibleTaggingUtil
         {
             new Thread(() =>
             {
-                ConvertUsfm2Osis(config.USFM2OSIS[Usfm2OsisConstants.outputFileName], config.USFM2OSIS[Usfm2OsisConstants.osisIDWork]);
+                RunOsis2mod(config.USFM2OSIS[Usfm2OsisConstants.outputFileName], config.USFM2OSIS[Usfm2OsisConstants.osisIDWork]);
             }).Start();
 
         }
         #endregion USFM Menu
 
         #region usfm2osis
-        private void ConvertUsfm2Osis(string sourceFileName, string targetFolderName)
+        private void RunOsis2mod(string sourceFileName, string targetFolderName)
         {
             try
             {
@@ -1252,7 +1333,7 @@ namespace BibleTaggingUtil
 
         private void saveUpdatedTartgetToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveUpdates();
+                SaveUpdates();
         }
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)

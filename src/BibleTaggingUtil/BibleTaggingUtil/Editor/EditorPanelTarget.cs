@@ -22,6 +22,21 @@ namespace BibleTaggingUtil.Editor
         {
             try
             {
+                bool oldTestament = false;
+                string reference = tbCurrentReference.Text;
+                if(string.IsNullOrEmpty(reference))
+                {
+                    string book = reference.Substring(0, 3);
+                    if(Constants.osisNames.Contains(book))
+                    {
+                        int i = Array.IndexOf(Constants.osisNames, book);
+                        if(i< 39)
+                        {
+                            oldTestament= true;
+                        }
+                    }
+                }
+
                 string direction = Properties.Settings.Default.TargetTextDirection;
                 dgvTargetVerse.Rows.Clear();
                 string[] verseParts = verse.Trim().Split(' ');
@@ -113,16 +128,16 @@ namespace BibleTaggingUtil.Editor
                     string tag = (string)dgvTargetVerse.Rows[1].Cells[i].Value;
                     if (tag == null)
                         continue;
-                    if (tag.Contains("3068"))
+                    if (tag.Contains("3068") && oldTestament)
                     {
                         dgvTargetVerse.Rows[1].Cells[i].Style.ForeColor = Color.Red;
                     }
-                    else if (tag.Contains("0430>"))
+                    else if (tag.Contains("0430>") && oldTestament)
                     {
                         dgvTargetVerse.Rows[1].Cells[i].Style.BackColor = Color.Green;
                         dgvTargetVerse.Rows[1].Cells[i].Style.ForeColor = Color.White;
                     }
-                    else if (tag.Contains("0410>"))
+                    else if (tag.Contains("0410>") && oldTestament)
                         dgvTargetVerse.Rows[1].Cells[i].Style.BackColor = Color.Yellow;
                     else if (tag.Contains("???") || tag.Contains("0000"))
                         dgvTargetVerse.Rows[1].Cells[i].Style.BackColor = Color.Gray;
