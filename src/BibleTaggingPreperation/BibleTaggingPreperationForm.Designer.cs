@@ -1,6 +1,6 @@
-﻿namespace BibleTaggingPreperation
+﻿namespace BibleTagging
 {
-    partial class Form1
+    partial class BibleTaggingPreperationForm
     {
         /// <summary>
         ///  Required designer variable.

@@ -43,7 +43,6 @@ namespace BibleTaggingUtil
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveKJVPlainToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveHebrewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.nextVerseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateSWORDFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.usfmToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateUSFMFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -83,7 +82,6 @@ namespace BibleTaggingUtil
             this.fileToolStripMenuItem,
             this.saveKJVPlainToolStripMenuItem,
             this.saveHebrewToolStripMenuItem,
-            this.nextVerseToolStripMenuItem,
             this.generateSWORDFilesToolStripMenuItem,
             this.usfmToolStripMenuItem,
             this.oSISToolStripMenuItem,
@@ -108,21 +106,21 @@ namespace BibleTaggingUtil
             // setBibleFolderToolStripMenuItem
             // 
             this.setBibleFolderToolStripMenuItem.Name = "setBibleFolderToolStripMenuItem";
-            this.setBibleFolderToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.setBibleFolderToolStripMenuItem.Size = new System.Drawing.Size(197, 26);
             this.setBibleFolderToolStripMenuItem.Text = "Set Bible Folder";
             this.setBibleFolderToolStripMenuItem.Click += new System.EventHandler(this.setBibleFolderToolStripMenuItem_Click);
             // 
             // saveUpdatedTartgetToolStripMenuItem
             // 
             this.saveUpdatedTartgetToolStripMenuItem.Name = "saveUpdatedTartgetToolStripMenuItem";
-            this.saveUpdatedTartgetToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.saveUpdatedTartgetToolStripMenuItem.Size = new System.Drawing.Size(197, 26);
             this.saveUpdatedTartgetToolStripMenuItem.Text = "Save Updatest";
             this.saveUpdatedTartgetToolStripMenuItem.Click += new System.EventHandler(this.saveUpdatedTartgetToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(197, 26);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -139,13 +137,6 @@ namespace BibleTaggingUtil
             this.saveHebrewToolStripMenuItem.Size = new System.Drawing.Size(110, 24);
             this.saveHebrewToolStripMenuItem.Text = "Save Hebrew";
             this.saveHebrewToolStripMenuItem.Click += new System.EventHandler(this.saveHebrewToolStripMenuItem_Click);
-            // 
-            // nextVerseToolStripMenuItem
-            // 
-            this.nextVerseToolStripMenuItem.Name = "nextVerseToolStripMenuItem";
-            this.nextVerseToolStripMenuItem.Size = new System.Drawing.Size(117, 24);
-            this.nextVerseToolStripMenuItem.Text = "Next ??? verse";
-            this.nextVerseToolStripMenuItem.Click += new System.EventHandler(this.nextVerseToolStripMenuItem_Click);
             // 
             // generateSWORDFilesToolStripMenuItem
             // 
@@ -242,7 +233,6 @@ namespace BibleTaggingUtil
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "BibleTaggingForm";
-            this.Text = "Bible Tagging V3";
             this.Load += new System.EventHandler(this.BibleTaggingForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -268,7 +258,6 @@ namespace BibleTaggingUtil
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.ToolStripMenuItem saveKJVPlainToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveHebrewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem nextVerseToolStripMenuItem;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog3;
         private System.Windows.Forms.ToolStripMenuItem generateSWORDFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem usfmToolStripMenuItem;

@@ -5,11 +5,13 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
 
 using WeifenLuo.WinFormsUI.Docking;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace BibleTaggingUtil.Editor
 {
@@ -71,7 +73,7 @@ namespace BibleTaggingUtil.Editor
 
             dgvTargetVerse.ColumnAdded += DgvTargetVerse_ColumnAdded;
             dgvTargetVerse.ColumnRemoved += DgvTargetVerse_ColumnRemoved;
-           dgvTargetVerse.CellValueChanged += DgvTargetVerse_CellValueChanged;
+            dgvTargetVerse.CellValueChanged += DgvTargetVerse_CellValueChanged;
             // Drag
             // Subscribe to the Reference Verse click event for drag & drop
             dgvReferenceVerse.MouseDown += DgvReferenceVerse_MouseDown;
@@ -81,6 +83,7 @@ namespace BibleTaggingUtil.Editor
             dgvTargetVerse.DragEnter += DgvTargetVerse_DragEnter;
             dgvTargetVerse.DragDrop += DgvTargetVerse_DragDrop;
 
+            dgvTargetVerse.CellEnter += DgvTargetVerse_CellEnter;
 
 
             this.tbReferenceBible.DoubleClick += TbReferenceBible_DoubleClick;
@@ -91,7 +94,11 @@ namespace BibleTaggingUtil.Editor
             dgvTOTHTView.CellContentDoubleClick += DgvTOTHTView_CellContentDoubleClick;
             verse.VerseChanged += Verse_VerseChanged;
 
+            this.PreviewKeyDown += EditorPanel_PreviewKeyDown;
+            this.KeyDown += EditorPanel_KeyDown;
+
         }
+
 
         private void DgvTargetVerse_ColumnRemoved(object sender, DataGridViewColumnEventArgs e)
         {
@@ -254,7 +261,7 @@ namespace BibleTaggingUtil.Editor
 
         private void TempTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-//            parent.NextUnknownVerse();
+            //            parent.FindVerse(cbTagToFind.Text);
         }
 
 
@@ -459,7 +466,7 @@ namespace BibleTaggingUtil.Editor
 
         #endregion Reference verse events
 
-
+        #region Context Menu
         private void DgvTargetVerseContextMenu_Opening(object sender, CancelEventArgs e)
         {
             e.Cancel = true;
@@ -501,7 +508,7 @@ namespace BibleTaggingUtil.Editor
 
                     dgvTargetVerse.ContextMenuStrip.Items.Clear();
 
-                    string[] strings = text.Split(' ');
+                    string[] strings = text.Trim().Split(' ');
                     if (strings.Length > 1)
                     {
                         ToolStripMenuItem reverseMenuItem = new ToolStripMenuItem(REVERSE_CONTEXT_MENU);
@@ -701,6 +708,7 @@ namespace BibleTaggingUtil.Editor
 
 
         }
+        #endregion Context Menu
 
         #region Drag & Dop
         class DragData
@@ -826,6 +834,7 @@ namespace BibleTaggingUtil.Editor
                     }
                 }
                 dgvTargetVerse[hittest.ColumnIndex, 1].Value = newValue.Trim();
+                SelectReferenceTags(newValue.Trim());
 
                 if (data.Source.Equals(dgvTargetVerse))
                 {
@@ -833,12 +842,94 @@ namespace BibleTaggingUtil.Editor
                 }
 
                 dgvTargetVerse.ClearSelection();
-
+                dgvTargetVerse[hittest.ColumnIndex, 1].Selected= true;
                 dgvTargetVerse.Rows[0].ReadOnly = true;
+                new Thread(() => { SelectReferenceTags(newValue.Trim()); }).Start();
+                dgvTargetVerse.Focus();
             }
         }
 
         #endregion Drag & Dop
+
+        #region Higlight same tag
+        private void DgvTargetVerse_CellEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dgvTargetVerse.SelectedCells.Count == 1)
+            {
+                SelectReferenceTags((string)dgvTargetVerse.Rows[1].Cells[e.ColumnIndex].Value);
+            }
+        }
+
+
+        private void SelectReferenceTags(string tag)
+        {
+            if (InvokeRequired)
+            {
+                Action safeWrite = delegate { SelectReferenceTags(tag); };
+                Invoke(safeWrite);
+            }
+            else
+            {
+                try
+                {
+                    dgvReferenceVerse.ClearSelection();
+                    dgvTOTHTView.ClearSelection();
+
+                    if (string.IsNullOrEmpty(tag))
+                    {
+                        SetHighlightedCell(dgvTOTHTView, null, null);
+                        SetHighlightedCell(dgvReferenceVerse, null, null);
+                        return;
+                    }
+
+                    string[] tags = tag.Trim().Split(' ');
+                    string[] tags1 = new string[tags.Length];
+                    string[] tags2 = new string[tags.Length];
+                    for (int i = 0; i < tags.Length; i++)
+                    {
+                        tags1[i] = tags[i].Replace("<", "").Replace(">", "");
+                        tags2[i] = tags[i];
+                        while (tags2[i][1] == '0')
+                            tags2[i] = tags2[i].Remove(1, 1);
+                    }
+
+                    SetHighlightedCell(dgvTOTHTView, tags1, tags2);
+                    SetHighlightedCell(dgvReferenceVerse, tags1, tags2);
+
+                }
+                catch (Exception ex)
+                {
+                    int x = 0;
+                }
+            }
+        }
+
+        private void SetHighlightedCell(DataGridView dgv, string[] tags1, string[] tags2)
+        {
+            int count = dgv.ColumnCount;
+            int tagsRow = dgv.RowCount - 1;
+            for (int i = 0; i < count; i++)
+            {
+                dgv.Rows[tagsRow].Cells[i].Style.BackColor = Color.White;
+                dgv.Rows[tagsRow].Cells[i].Selected = false;
+
+                if (tags1 == null)
+                    continue;
+                string refTag = (string)dgv.Rows[tagsRow].Cells[i].Value;
+
+                if (!string.IsNullOrEmpty(refTag))
+                    for (int j = 0; j < tags1.Length; j++)
+                    {
+                        if (refTag.Contains(tags1[j]) || refTag.Contains(tags2[j]))
+                        {
+                            dgv.Rows[tagsRow].Cells[i].Style.BackColor = Color.Yellow;
+                        }
+                    }
+            }
+
+        }
+        #endregion Higlight same tag
+
 
         private void TbTargetBible_DoubleClick(object sender, System.EventArgs e)
         {
@@ -851,16 +942,35 @@ namespace BibleTaggingUtil.Editor
         }
 
 
-        private void lblPrevious_Click(object sender, EventArgs e)
+        private void EditorPanel_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            e.IsInputKey = true;
+        }
+
+        private void EditorPanel_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Modifiers == Keys.PageUp)
+            {
+                verse.MoveToPrevious();
+            }
+            else if (e.Modifiers == Keys.PageDown)
+            {
+                verse.MoveToNext();
+            }
+        }
+
+        #region Buttons
+        private void picPrevVerse_Click(object sender, EventArgs e)
         {
             verse.MoveToPrevious();
         }
-        private void lblNext_Click(object sender, EventArgs e)
+
+        private void picNextVerse_Click(object sender, EventArgs e)
         {
             verse.MoveToNext();
         }
 
-        private void btnResetVerse_Click(object sender, EventArgs e)
+        private void picResetVerse_Click(object sender, EventArgs e)
         {
             string caption = "Reset Current Verse";
             string message = "Reseting clears all tags, Continu?";
@@ -889,17 +999,12 @@ namespace BibleTaggingUtil.Editor
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void picSave_Click(object sender, EventArgs e)
         {
             parent.SaveUpdates();
         }
 
-        private void btnNextUnknownTag_Click(object sender, EventArgs e)
-        {
-            parent.NextUnknownVerse();
-        }
-
-        private void btnDecreseFont_Click(object sender, EventArgs e)
+        private void picDecreaseFont_Click(object sender, EventArgs e)
         {
             Font  font = dgvReferenceVerse.DefaultCellStyle.Font;
             dgvReferenceVerse.DefaultCellStyle.Font = new Font(font.Name, font.Size - 1);
@@ -909,8 +1014,7 @@ namespace BibleTaggingUtil.Editor
             dgvTOTHTView.DefaultCellStyle.Font = new Font(font.Name, font.Size - 1);
 
         }
-
-        private void btnIncreasFont_Click(object sender, EventArgs e)
+        private void picIncreaseFont_Click(object sender, EventArgs e)
         {
             Font font = dgvReferenceVerse.DefaultCellStyle.Font;
             dgvReferenceVerse.DefaultCellStyle.Font = new Font(font.Name, font.Size + 1);
@@ -920,14 +1024,18 @@ namespace BibleTaggingUtil.Editor
             dgvTOTHTView.DefaultCellStyle.Font = new Font(font.Name, font.Size + 1);
         }
 
-        private void btnEbaleEdit_Click(object sender, EventArgs e)
+        private void picEnableEdit_Click(object sender, EventArgs e)
         {
             dgvTargetVerse.Rows[0].ReadOnly = false;
         }
 
-        private void tbCurrentReference_TextChanged(object sender, EventArgs e)
+        private void picFindTagForward_Click(object sender, EventArgs e)
         {
-
+            parent.FindVerse(cbTagToFind.Text);
         }
+
+        #endregion Buttons
+
+
     }
 }

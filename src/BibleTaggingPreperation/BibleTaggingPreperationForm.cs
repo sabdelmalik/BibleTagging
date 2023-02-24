@@ -2,11 +2,9 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
 
-using BibleTaggingUtil;
-
-namespace BibleTaggingPreperation
+namespace BibleTagging
 {
-    public partial class Form1 : Form
+    public partial class BibleTaggingPreperationForm : Form
     {
         private string workFolder = string.Empty;
         private string alignerPath = string.Empty;
@@ -18,9 +16,11 @@ namespace BibleTaggingPreperation
         private const char sourceChVsSeperator = ':';
         private const char sourceVsTxSeperator = ' ';
 
+        private BibleVersification bibleVersification = null;
+
         // java -server -mx1000m -cp berkeleyaligner.jar edu.berkeley.nlp.wordAlignment.Main ++confs/NT.conf
 
-        public Form1()
+        public BibleTaggingPreperationForm()
         {
             InitializeComponent();
         }
@@ -55,7 +55,12 @@ namespace BibleTaggingPreperation
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            bibleVersification = new BibleVersification(this);
+
             PrepareFolders();
+
+
+
 
             Trace(workFolder, Color.Blue);
             

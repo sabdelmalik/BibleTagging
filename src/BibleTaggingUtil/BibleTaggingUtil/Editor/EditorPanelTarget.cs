@@ -122,6 +122,9 @@ namespace BibleTaggingUtil.Editor
                 dgvTargetVerse.Rows.Add(verseWords);
                 dgvTargetVerse.Rows.Add(verseTags);
 
+                string highlightedTag = cbTagToFind.Text;
+                if (string.IsNullOrEmpty(highlightedTag) || highlightedTag.ToLower() == "<blank>")
+                    highlightedTag = "<>";
                 for (int i = 0; i < verseWords.Length; i++)
                 {
                     string word = (string)dgvTargetVerse.Rows[0].Cells[i].Value;
@@ -139,8 +142,8 @@ namespace BibleTaggingUtil.Editor
                     }
                     else if (tag.Contains("0410>") && oldTestament)
                         dgvTargetVerse.Rows[1].Cells[i].Style.BackColor = Color.Yellow;
-                    else if (tag.Contains("???") || tag.Contains("0000"))
-                        dgvTargetVerse.Rows[1].Cells[i].Style.BackColor = Color.Gray;
+                    else if (tag.Contains(highlightedTag) || tag.Contains("0000") || (tag == string.Empty && highlightedTag == "<>"))
+                        dgvTargetVerse.Rows[1].Cells[i].Style.BackColor = Color.LightGray;
                     else
                         dgvTargetVerse.Rows[1].Cells[i].Style.ForeColor = Color.Black;
 
