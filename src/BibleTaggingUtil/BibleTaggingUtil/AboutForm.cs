@@ -33,8 +33,10 @@ namespace BibleTaggingUtil
             textBoxAbout.Text += copyright + "\r\n\r\n";
             textBoxAbout.Text += "Version # " + version.ToString() + "\r\n";
 
-            textBoxAbout.DeselectAll();
-            textBoxAbout.SelectedText = "";
+            textBoxAbout.Text += "\r\nicons from https://icons8.com\r\n";
+
+
+            textBoxAbout.Select(0, 0);
         }
 
         private void btnOK_Click(object sender, EventArgs e)

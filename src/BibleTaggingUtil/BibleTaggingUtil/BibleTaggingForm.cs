@@ -27,6 +27,8 @@ using static System.Net.Mime.MediaTypeNames;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.DataFormats;
 using Microsoft.VisualBasic.Devices;
+using System.Reflection;
+using static System.Net.WebRequestMethods;
 
 namespace BibleTaggingUtil
 {
@@ -80,7 +82,6 @@ namespace BibleTaggingUtil
             nextVerseToolStripMenuItem.Visible = false;
             saveHebrewToolStripMenuItem.Visible = false;
             saveKJVPlainToolStripMenuItem.Visible = false;
-            settingsToolStripMenuItem.Visible = false;
             usfmToolStripMenuItem.Visible = false;
             oSISToolStripMenuItem.Visible = false;
 #endif
@@ -104,7 +105,7 @@ namespace BibleTaggingUtil
 
             string configFile = Path.Combine(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath), "DockPanel.config");
 
-            if (File.Exists(configFile))
+            if (System.IO.File.Exists(configFile))
                 dockPanel.LoadFromXml(configFile, m_deserializeDockContent);
 
             browserPanel = new BrowserPanel(); //CreateNewDocument();
@@ -154,6 +155,11 @@ namespace BibleTaggingUtil
 
             #endregion WinFormUI setup
 
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            AssemblyName assemblyName = assembly.GetName();
+            Version version = assemblyName.Version;
+            this.Text = "Bible Tagging " + version.ToString();
+
             new Thread(() => { LoadBibles(); }).Start();
         }
 
@@ -183,12 +189,13 @@ namespace BibleTaggingUtil
             // Save the Verses Updates
 
             SaveUpdates();
+            Properties.Settings.Default.Save();
 
             string configFile = Path.Combine(Path.GetDirectoryName(System.Windows.Forms.Application.ExecutablePath), "DockPanel.config");
             if (m_bSaveLayout)
                 dockPanel.SaveAsXml(configFile);
-            else if (File.Exists(configFile))
-                File.Delete(configFile);
+            else if (System.IO.File.Exists(configFile))
+                System.IO.File.Delete(configFile);
         }
 
         #endregion Form Events
@@ -258,7 +265,7 @@ namespace BibleTaggingUtil
 
                 taggedFolder = Path.GetDirectoryName(config.TaggedBible);
 
-                if (!string.IsNullOrEmpty(config.UnTaggedBible) && File.Exists(config.UnTaggedBible))
+                if (!string.IsNullOrEmpty(config.UnTaggedBible) && System.IO.File.Exists(config.UnTaggedBible))
                 {
                     untaggedBibleOk = true;
                 }
@@ -295,7 +302,7 @@ namespace BibleTaggingUtil
                 return;
             }
 
-            if (string.IsNullOrEmpty(config.KJV) || !File.Exists(config.KJV))
+            if (string.IsNullOrEmpty(config.KJV) || !System.IO.File.Exists(config.KJV))
             {
                 MessageBox.Show("KJV is missing");
                 CloseForm();
@@ -526,10 +533,10 @@ namespace BibleTaggingUtil
                     string fName = Path.GetFileName(existingTaggedItem);
                     string src = Path.Combine(taggedFolder, fName);
                     string dst = Path.Combine(oldTaggedFolder, fName); 
-                    if(File.Exists(dst))
-                        File.Delete(src);
+                    if(System.IO.File.Exists(dst))
+                        System.IO.File.Delete(src);
                     else
-                        File.Move(src, dst);
+                        System.IO.File.Move(src, dst);
                 }
 
                 string baseName = Path.GetFileNameWithoutExtension(config.TaggedBible);
@@ -1128,7 +1135,7 @@ namespace BibleTaggingUtil
 
 
 
-        public void NextUnknownVerse ()
+        public void FindVerse (string tag)
         {
             string newRef = editorPanel.CurrentVerse;
             while (true)
@@ -1144,7 +1151,13 @@ namespace BibleTaggingUtil
                                 Replace("Nah", "Nam");
 
                 newRef = verseSelectionPanel.GetNextRef(newRef);
-                if(newRef.Contains("Mat"))
+                if (newRef == "Rev 22:21")
+                {
+                    verseSelectionPanel.GotoVerse(newRef);
+                    break;
+                }
+
+                if (newRef.Contains("Mat"))
                 {
                     int stop = 0;
                 }
@@ -1156,10 +1169,10 @@ namespace BibleTaggingUtil
                 // Ezk as Eze
                 // Jol as Joe
                 // Nam as Nah
-               newRef = newRef.Replace("Sng", "Sol").
-                                Replace("Ezk", "Eze").
-                                Replace("Jol", "Joe").
-                                Replace("Nam", "Nah");
+                newRef = newRef.Replace("Sng", "Sol").
+                                 Replace("Ezk", "Eze").
+                                 Replace("Jol", "Joe").
+                                 Replace("Nam", "Nah");
 
                 try
                 {
@@ -1203,17 +1216,21 @@ namespace BibleTaggingUtil
                 //    MessageBox.Show(ex.Message);
                 //}
 
-                if (text.Contains("???") || text.Contains("0000"))
+                if ((string.IsNullOrEmpty(tag) || tag.ToLower() == "<blank>"))
+                {
+                    if (text.Contains("<>"))
+                    {
+                        verseSelectionPanel.GotoVerse(newRef);
+                        break;
+
+                    }
+                }
+                else if (text.Contains(tag))
                 {
                     verseSelectionPanel.GotoVerse(newRef);
                     break;
                 }
             }
-        }
-
-        private void nextVerseToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            NextUnknownVerse();
         }
 
         #region Generate SWORD Files Main Menu
@@ -1325,7 +1342,7 @@ namespace BibleTaggingUtil
                     var allFiles = Directory.GetFiles(targetFolder, "*.*");
                     foreach (string file in allFiles)
                     {
-                        File.Copy(file, file.Replace(targetFolder, backupPath));
+                        System.IO.File.Copy(file, file.Replace(targetFolder, backupPath));
                     }
                                     }
 
@@ -1343,7 +1360,7 @@ namespace BibleTaggingUtil
                     string[] files = Directory.GetFiles(targetFolder);
                     foreach (string file in files)
                     {
-                        File.Delete(file);
+                        System.IO.File.Delete(file);
                     }
                 }
 

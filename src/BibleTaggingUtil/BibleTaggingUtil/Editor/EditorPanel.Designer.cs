@@ -29,20 +29,21 @@ namespace BibleTaggingUtil.Editor
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Panel panel1;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorPanel));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            this.btnEbaleEdit = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
-            this.btnDecreseFont = new System.Windows.Forms.Button();
-            this.btnIncreasFont = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnNextUnknownTag = new System.Windows.Forms.Button();
-            this.btnResetVerse = new System.Windows.Forms.Button();
-            this.lblNext = new System.Windows.Forms.Label();
-            this.lblPrevious = new System.Windows.Forms.Label();
+            this.picFindTagForward = new System.Windows.Forms.PictureBox();
+            this.picDecreaseFont = new System.Windows.Forms.PictureBox();
+            this.picIncreaseFont = new System.Windows.Forms.PictureBox();
+            this.picEnableEdit = new System.Windows.Forms.PictureBox();
+            this.picResetVerse = new System.Windows.Forms.PictureBox();
+            this.picPrevVerse = new System.Windows.Forms.PictureBox();
+            this.picNextVerse = new System.Windows.Forms.PictureBox();
+            this.picSave = new System.Windows.Forms.PictureBox();
+            this.cbTagToFind = new System.Windows.Forms.ComboBox();
             this.tbCurrentReference = new System.Windows.Forms.TextBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
@@ -55,8 +56,17 @@ namespace BibleTaggingUtil.Editor
             this.toolStrip2 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.tbReferenceBible = new System.Windows.Forms.ToolStripTextBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             panel1 = new System.Windows.Forms.Panel();
             panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFindTagForward)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picDecreaseFont)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picIncreaseFont)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picEnableEdit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picResetVerse)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPrevVerse)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picNextVerse)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSave)).BeginInit();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainerMainEditor)).BeginInit();
             this.splitContainerMainEditor.Panel1.SuspendLayout();
@@ -74,15 +84,15 @@ namespace BibleTaggingUtil.Editor
             // 
             // panel1
             // 
-            panel1.Controls.Add(this.btnEbaleEdit);
-            panel1.Controls.Add(this.label1);
-            panel1.Controls.Add(this.btnDecreseFont);
-            panel1.Controls.Add(this.btnIncreasFont);
-            panel1.Controls.Add(this.btnSave);
-            panel1.Controls.Add(this.btnNextUnknownTag);
-            panel1.Controls.Add(this.btnResetVerse);
-            panel1.Controls.Add(this.lblNext);
-            panel1.Controls.Add(this.lblPrevious);
+            panel1.Controls.Add(this.picFindTagForward);
+            panel1.Controls.Add(this.picDecreaseFont);
+            panel1.Controls.Add(this.picIncreaseFont);
+            panel1.Controls.Add(this.picEnableEdit);
+            panel1.Controls.Add(this.picResetVerse);
+            panel1.Controls.Add(this.picPrevVerse);
+            panel1.Controls.Add(this.picNextVerse);
+            panel1.Controls.Add(this.picSave);
+            panel1.Controls.Add(this.cbTagToFind);
             panel1.Controls.Add(this.tbCurrentReference);
             panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
             panel1.Location = new System.Drawing.Point(0, 788);
@@ -91,110 +101,125 @@ namespace BibleTaggingUtil.Editor
             panel1.Size = new System.Drawing.Size(1299, 72);
             panel1.TabIndex = 8;
             // 
-            // btnEbaleEdit
+            // picFindTagForward
             // 
-            this.btnEbaleEdit.Location = new System.Drawing.Point(1018, 25);
-            this.btnEbaleEdit.Name = "btnEbaleEdit";
-            this.btnEbaleEdit.Size = new System.Drawing.Size(94, 29);
-            this.btnEbaleEdit.TabIndex = 11;
-            this.btnEbaleEdit.Text = "Enable Edit";
-            this.btnEbaleEdit.UseVisualStyleBackColor = true;
-            this.btnEbaleEdit.Click += new System.EventHandler(this.btnEbaleEdit_Click);
+            this.picFindTagForward.Image = ((System.Drawing.Image)(resources.GetObject("picFindTagForward.Image")));
+            this.picFindTagForward.Location = new System.Drawing.Point(579, 17);
+            this.picFindTagForward.Name = "picFindTagForward";
+            this.picFindTagForward.Size = new System.Drawing.Size(40, 40);
+            this.picFindTagForward.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picFindTagForward.TabIndex = 20;
+            this.picFindTagForward.TabStop = false;
+            this.toolTip1.SetToolTip(this.picFindTagForward, "Find Tag Forward");
+            this.picFindTagForward.Click += new System.EventHandler(this.picFindTagForward_Click);
             // 
-            // label1
+            // picDecreaseFont
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(1210, 26);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 20);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "Font";
+            this.picDecreaseFont.Image = ((System.Drawing.Image)(resources.GetObject("picDecreaseFont.Image")));
+            this.picDecreaseFont.Location = new System.Drawing.Point(523, 17);
+            this.picDecreaseFont.Name = "picDecreaseFont";
+            this.picDecreaseFont.Size = new System.Drawing.Size(40, 40);
+            this.picDecreaseFont.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picDecreaseFont.TabIndex = 19;
+            this.picDecreaseFont.TabStop = false;
+            this.toolTip1.SetToolTip(this.picDecreaseFont, "Decrease Font Size");
+            this.picDecreaseFont.Click += new System.EventHandler(this.picDecreaseFont_Click);
             // 
-            // btnDecreseFont
+            // picIncreaseFont
             // 
-            this.btnDecreseFont.Location = new System.Drawing.Point(1169, 22);
-            this.btnDecreseFont.Name = "btnDecreseFont";
-            this.btnDecreseFont.Size = new System.Drawing.Size(41, 29);
-            this.btnDecreseFont.TabIndex = 9;
-            this.btnDecreseFont.Text = "<<";
-            this.btnDecreseFont.UseVisualStyleBackColor = true;
-            this.btnDecreseFont.Click += new System.EventHandler(this.btnDecreseFont_Click);
+            this.picIncreaseFont.Image = ((System.Drawing.Image)(resources.GetObject("picIncreaseFont.Image")));
+            this.picIncreaseFont.Location = new System.Drawing.Point(467, 17);
+            this.picIncreaseFont.Name = "picIncreaseFont";
+            this.picIncreaseFont.Size = new System.Drawing.Size(40, 40);
+            this.picIncreaseFont.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picIncreaseFont.TabIndex = 18;
+            this.picIncreaseFont.TabStop = false;
+            this.toolTip1.SetToolTip(this.picIncreaseFont, "Increase Font Size");
+            this.picIncreaseFont.Click += new System.EventHandler(this.picIncreaseFont_Click);
             // 
-            // btnIncreasFont
+            // picEnableEdit
             // 
-            this.btnIncreasFont.Location = new System.Drawing.Point(1248, 22);
-            this.btnIncreasFont.Name = "btnIncreasFont";
-            this.btnIncreasFont.Size = new System.Drawing.Size(41, 29);
-            this.btnIncreasFont.TabIndex = 9;
-            this.btnIncreasFont.Text = ">>";
-            this.btnIncreasFont.UseVisualStyleBackColor = true;
-            this.btnIncreasFont.Click += new System.EventHandler(this.btnIncreasFont_Click);
+            this.picEnableEdit.Image = ((System.Drawing.Image)(resources.GetObject("picEnableEdit.Image")));
+            this.picEnableEdit.Location = new System.Drawing.Point(411, 17);
+            this.picEnableEdit.Name = "picEnableEdit";
+            this.picEnableEdit.Size = new System.Drawing.Size(40, 40);
+            this.picEnableEdit.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picEnableEdit.TabIndex = 17;
+            this.picEnableEdit.TabStop = false;
+            this.toolTip1.SetToolTip(this.picEnableEdit, "Enable Edit");
+            this.picEnableEdit.Click += new System.EventHandler(this.picEnableEdit_Click);
             // 
-            // btnSave
+            // picResetVerse
             // 
-            this.btnSave.Location = new System.Drawing.Point(611, 18);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(94, 42);
-            this.btnSave.TabIndex = 8;
-            this.btnSave.Text = "Save";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.picResetVerse.Image = ((System.Drawing.Image)(resources.GetObject("picResetVerse.Image")));
+            this.picResetVerse.Location = new System.Drawing.Point(355, 17);
+            this.picResetVerse.Name = "picResetVerse";
+            this.picResetVerse.Size = new System.Drawing.Size(40, 40);
+            this.picResetVerse.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picResetVerse.TabIndex = 16;
+            this.picResetVerse.TabStop = false;
+            this.toolTip1.SetToolTip(this.picResetVerse, "Reset Verse");
+            this.picResetVerse.Click += new System.EventHandler(this.picResetVerse_Click);
             // 
-            // btnNextUnknownTag
+            // picPrevVerse
             // 
-            this.btnNextUnknownTag.Location = new System.Drawing.Point(739, 18);
-            this.btnNextUnknownTag.Name = "btnNextUnknownTag";
-            this.btnNextUnknownTag.Size = new System.Drawing.Size(229, 42);
-            this.btnNextUnknownTag.TabIndex = 7;
-            this.btnNextUnknownTag.Text = "Next Unknown Tag";
-            this.btnNextUnknownTag.UseVisualStyleBackColor = true;
-            this.btnNextUnknownTag.Click += new System.EventHandler(this.btnNextUnknownTag_Click);
+            this.picPrevVerse.Image = ((System.Drawing.Image)(resources.GetObject("picPrevVerse.Image")));
+            this.picPrevVerse.Location = new System.Drawing.Point(12, 17);
+            this.picPrevVerse.Name = "picPrevVerse";
+            this.picPrevVerse.Size = new System.Drawing.Size(40, 40);
+            this.picPrevVerse.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picPrevVerse.TabIndex = 15;
+            this.picPrevVerse.TabStop = false;
+            this.toolTip1.SetToolTip(this.picPrevVerse, "Previous Verse");
+            this.picPrevVerse.Click += new System.EventHandler(this.picPrevVerse_Click);
             // 
-            // btnResetVerse
+            // picNextVerse
             // 
-            this.btnResetVerse.Location = new System.Drawing.Point(441, 18);
-            this.btnResetVerse.Name = "btnResetVerse";
-            this.btnResetVerse.Size = new System.Drawing.Size(127, 42);
-            this.btnResetVerse.TabIndex = 6;
-            this.btnResetVerse.Text = "Reset Verse";
-            this.btnResetVerse.UseVisualStyleBackColor = true;
-            this.btnResetVerse.Click += new System.EventHandler(this.btnResetVerse_Click);
+            this.picNextVerse.Image = ((System.Drawing.Image)(resources.GetObject("picNextVerse.Image")));
+            this.picNextVerse.Location = new System.Drawing.Point(233, 17);
+            this.picNextVerse.Name = "picNextVerse";
+            this.picNextVerse.Size = new System.Drawing.Size(40, 40);
+            this.picNextVerse.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picNextVerse.TabIndex = 14;
+            this.picNextVerse.TabStop = false;
+            this.toolTip1.SetToolTip(this.picNextVerse, "Next Verse");
+            this.picNextVerse.Click += new System.EventHandler(this.picNextVerse_Click);
             // 
-            // lblNext
+            // picSave
             // 
-            this.lblNext.AutoSize = true;
-            this.lblNext.Image = ((System.Drawing.Image)(resources.GetObject("lblNext.Image")));
-            this.lblNext.Location = new System.Drawing.Point(298, 9);
-            this.lblNext.MaximumSize = new System.Drawing.Size(78, 51);
-            this.lblNext.MinimumSize = new System.Drawing.Size(78, 51);
-            this.lblNext.Name = "lblNext";
-            this.lblNext.Size = new System.Drawing.Size(78, 51);
-            this.lblNext.TabIndex = 5;
-            this.lblNext.Click += new System.EventHandler(this.lblNext_Click);
+            this.picSave.Image = ((System.Drawing.Image)(resources.GetObject("picSave.Image")));
+            this.picSave.Location = new System.Drawing.Point(299, 17);
+            this.picSave.Name = "picSave";
+            this.picSave.Size = new System.Drawing.Size(40, 40);
+            this.picSave.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picSave.TabIndex = 13;
+            this.picSave.TabStop = false;
+            this.toolTip1.SetToolTip(this.picSave, "Save");
+            this.picSave.Click += new System.EventHandler(this.picSave_Click);
             // 
-            // lblPrevious
+            // cbTagToFind
             // 
-            this.lblPrevious.AutoSize = true;
-            this.lblPrevious.Image = ((System.Drawing.Image)(resources.GetObject("lblPrevious.Image")));
-            this.lblPrevious.Location = new System.Drawing.Point(14, 9);
-            this.lblPrevious.MaximumSize = new System.Drawing.Size(70, 51);
-            this.lblPrevious.MinimumSize = new System.Drawing.Size(70, 51);
-            this.lblPrevious.Name = "lblPrevious";
-            this.lblPrevious.Size = new System.Drawing.Size(70, 51);
-            this.lblPrevious.TabIndex = 5;
-            this.lblPrevious.Click += new System.EventHandler(this.lblPrevious_Click);
+            this.cbTagToFind.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.cbTagToFind.FormattingEnabled = true;
+            this.cbTagToFind.Items.AddRange(new object[] {
+            "???",
+            "<blank>"});
+            this.cbTagToFind.Location = new System.Drawing.Point(630, 18);
+            this.cbTagToFind.Name = "cbTagToFind";
+            this.cbTagToFind.Size = new System.Drawing.Size(127, 28);
+            this.cbTagToFind.TabIndex = 12;
+            this.cbTagToFind.Text = "???";
             // 
             // tbCurrentReference
             // 
             this.tbCurrentReference.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             this.tbCurrentReference.ForeColor = System.Drawing.Color.DarkRed;
-            this.tbCurrentReference.Location = new System.Drawing.Point(98, 16);
+            this.tbCurrentReference.Location = new System.Drawing.Point(58, 15);
             this.tbCurrentReference.Name = "tbCurrentReference";
             this.tbCurrentReference.ReadOnly = true;
-            this.tbCurrentReference.Size = new System.Drawing.Size(185, 34);
+            this.tbCurrentReference.Size = new System.Drawing.Size(177, 34);
             this.tbCurrentReference.TabIndex = 1;
             this.tbCurrentReference.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.tbCurrentReference.TextChanged += new System.EventHandler(this.tbCurrentReference_TextChanged);
             // 
             // toolStrip1
             // 
@@ -369,6 +394,14 @@ namespace BibleTaggingUtil.Editor
             this.Load += new System.EventHandler(this.EditorPanel_Load);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picFindTagForward)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picDecreaseFont)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picIncreaseFont)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picEnableEdit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picResetVerse)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picPrevVerse)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picNextVerse)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picSave)).EndInit();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.splitContainerMainEditor.Panel1.ResumeLayout(false);
@@ -392,9 +425,7 @@ namespace BibleTaggingUtil.Editor
 
         #endregion
         private System.Windows.Forms.TextBox tbCurrentReference;
-        private System.Windows.Forms.Label lblPrevious;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Label lblNext;
+        private System.Windows.Forms.PictureBox picPrevVerse;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
@@ -405,14 +436,16 @@ namespace BibleTaggingUtil.Editor
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.ToolStripTextBox tbReferenceBible;
         private System.Windows.Forms.DataGridView dgvReferenceVerse;
-        private System.Windows.Forms.Button btnResetVerse;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.DataGridView dgvTOTHTView;
-        private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnNextUnknownTag;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Button btnDecreseFont;
-        private System.Windows.Forms.Button btnIncreasFont;
-        private System.Windows.Forms.Button btnEbaleEdit;
+        private System.Windows.Forms.ComboBox cbTagToFind;
+        private System.Windows.Forms.PictureBox picNextVerse;
+        private System.Windows.Forms.PictureBox picSave;
+        private System.Windows.Forms.PictureBox picResetVerse;
+        private System.Windows.Forms.PictureBox picEnableEdit;
+        private System.Windows.Forms.PictureBox picDecreaseFont;
+        private System.Windows.Forms.PictureBox picIncreaseFont;
+        private System.Windows.Forms.PictureBox picFindTagForward;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }

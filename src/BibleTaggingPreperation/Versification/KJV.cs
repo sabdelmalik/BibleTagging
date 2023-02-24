@@ -1,378 +1,39 @@
-﻿using System;
+﻿/**
+ * This code is taken form https://github.com/crosswire/jsword repository
+ * 
+ * Distribution License:
+ * JSword is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License, version 2.1 or later
+ * as published by the Free Software Foundation. This program is distributed
+ * in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
+ * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * The License is available on the internet at:
+ *       http://www.gnu.org/copyleft/lgpl.html
+ * or by writing to:
+ *      Free Software Foundation, Inc.
+ *      59 Temple Place - Suite 330
+ *      Boston, MA 02111-1307, USA
+ *
+ * Copyright: 2012
+ *     The copyright to this program is held by it's authors.
+ *
+ */
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BibleTagging
+namespace BibleTagging.Versification
 {
-    class Constants
+    internal class KJV
     {
-        public static int otVerses = 23144;
-        public static int ntVerses = 7958;
-
-        public static string[] fileNames =
-        {
-            "01-gen",
-            "02-Exodus",
-            "03-Leviticus",
-            "04-Numbers",
-            "05-Deut",
-            "06-Joshua",
-            "07-Judges",
-            "08-Ruth",
-            "09-1-Samuel",
-            "10-2-Samuel",
-            "11-1-Kings",
-            "12-2-Kings",
-            "13-1-Chronicles",
-            "14-2-Chronicles",
-            "15-Ezra",
-            "16-Nehmiah",
-            "17-Esther",
-            "18-Job",
-            "19-Psalms",
-            "20-Proverbs",
-            "21-Ecclesiastes",
-            "22-Sos",
-            "23-Isiah",
-            "24-Jeremiah",
-            "25-Lamentations",
-            "26-Ezekiel",
-            "27-Daniel",
-            "28-Hosea",
-            "29-Joel",
-            "30-Amos",
-            "31-Obadiah",
-            "32-Jonah",
-            "33-Micah",
-            "34-Nahum",
-            "35-Habakuk",
-            "36-Zephaniah",
-            "37-Haggai",
-            "38-Zechariah",
-            "39-Malachi",
-            "40-Matthew",
-            "41-Mark",
-            "42-Luke",
-            "43-John",
-            "44-Acts",
-            "45-Romans",
-            "46-1-Corinthians",
-            "47-2-Corinthians",
-            "48-Galatians",
-            "49-Ephesians",
-            "50-Philipians",
-            "51-Colossians",
-            "52-1-thessalonians",
-            "53-2-thessalonians",
-            "54-1-Timothy",
-            "55-2-Timothy",
-            "56-Titus",
-            "57-Phillemon",
-            "58-Hebrews",
-            "59-James",
-            "60-1-peter",
-            "61-2-peter",
-            "62-1-John",
-            "63-2-John",
-            "64-3-John",
-            "65-Jude",
-            "66-Revelation"
-        };
-
-        public static string[] usfmFileNamePrefixes =
-        {
-            "02-GEN",
-            "03-EXO",
-            "04-LEV",
-            "05-NUM",
-            "06-DEU",
-            "07-JOS",
-            "08-JDG",
-            "09-RUT",
-            "10-1SA",
-            "11-2SA",
-            "12-1KI",
-            "13-2KI",
-            "14-1CH",
-            "15-2CH",
-            "16-EZR",
-            "17-NEH",
-            "18-EST",
-            "19-JOB",
-            "20-PSA",
-            "21-PRO",
-            "22-ECC",
-            "23-SNG",
-            "24-ISA",
-            "25-JER",
-            "26-LAM",
-            "27-EZK",
-            "28-DAN",
-            "29-HOS",
-            "30-JOL",
-            "31-AMO",
-            "32-OBA",
-            "33-JON",
-            "34-MIC",
-            "35-NAM",
-            "36-HAB",
-            "37-ZEP",
-            "38-HAG",
-            "39-ZEC",
-            "40-MAL",
-            "70-MAT",
-            "71-MRK",
-            "72-LUK",
-            "73-JHN",
-            "74-ACT",
-            "75-ROM",
-            "76-1CO",
-            "77-2CO",
-            "78-GAL",
-            "79-EPH",
-            "80-PHP",
-            "81-COL",
-            "82-1TH",
-            "83-2TH",
-            "84-1TI",
-            "85-2TI",
-            "86-TIT",
-            "87-PHM",
-            "88-HEB",
-            "89-JAS",
-            "90-1PE",
-            "91-2PE",
-            "92-1JN",
-            "93-2JN",
-            "94-3JN",
-            "95-JUD",
-            "96-REV",
-        };
-
-
-        /// <summary>
-        /// Bible reference abbreviations as defined by CrossWire Bible Society
-        /// in the OSIS (Open Scriptural Information Standard) specs
-        /// </summary>
-        public static string[] osisNames =
-        {
-            "Gen",
-            "Exod",
-            "Lev",
-            "Num",
-            "Deut",
-            "Josh",
-            "Judg",
-            "Ruth",
-            "1Sam",
-            "2Sam",
-            "1Kgs",
-            "2Kgs",
-            "1Chr",
-            "2Chr",
-            "Ezra",
-            "Neh",
-            "Esth",
-            "Job",
-            "Ps",
-            "Prov",
-            "Eccl",
-            "Song",
-            "Isa",
-            "Jer",
-            "Lam",
-            "Ezek",
-            "Dan",
-            "Hos",
-            "Joel",
-            "Amos",
-            "Obad",
-            "Jonah",
-            "Mic",
-            "Nah",
-            "Hab",
-            "Zeph",
-            "Hag",
-            "Zech",
-            "Mal",
-            "Matt",
-            "Mark",
-            "Luke",
-            "John",
-            "Acts",
-            "Rom",
-            "1Cor",
-            "2Cor",
-            "Gal",
-            "Eph",
-            "Phil",
-            "Col",
-            "1Thess",
-            "2Thess",
-            "1Tim",
-            "2Tim",
-            "Titus",
-            "Phlm",
-            "Heb",
-            "Jas",
-            "1Pet",
-            "2Pet",
-            "1John",
-            "2John",
-            "3John",
-            "Jude",
-            "Rev"
-        };
-
-        /// <summary>
-        /// United Bible Societies
-        /// American Bible Society & Paratext abbreviations
-        /// </summary>
-        public static string[] ubsNames =
-        {
-        "Gen",
-        "Exo",
-        "Lev",
-        "Num",
-        "Deu",
-        "Jos",
-        "Jdg",
-        "Rut",
-        "1Sa",
-        "2Sa",
-        "1Ki",
-        "2Ki",
-        "1Ch",
-        "2Ch",
-        "Ezr",
-        "Neh",
-        "Est",
-        "Job",
-        "Psa",
-        "Pro",
-        "Ecc",
-        "Sng",
-        "Isa",
-        "Jer",
-        "Lam",
-        "Ezk",
-        "Dan",
-        "Hos",
-        "Jol",
-        "Amo",
-        "Oba",
-        "Jon",
-        "Mic",
-        "Nam",
-        "Hab",
-        "Zep",
-        "Hag",
-        "Zec",
-        "Mal",
-        "Mat",
-        "Mrk",
-        "Luk",
-        "Jhn",
-        "Act",
-        "Rom",
-        "1Co",
-        "2Co",
-        "Gal",
-        "Eph",
-        "Php",
-        "Col",
-        "1Th",
-        "2Th",
-        "1Ti",
-        "2Ti",
-        "Tit",
-        "Phm",
-        "Heb",
-        "Jas",
-        "1Pe",
-        "2Pe",
-        "1Jn",
-        "2Jn",
-        "3Jn",
-        "Jud",
-        "Rev"
-        };
-
-        public static string[] osisAltNames =
-        {
-            "Gen",
-            "Exo",
-            "Lev",
-            "Num",
-            "Deu",
-            "Jos",
-            "Jdg",
-            "Rut",
-            "1Sa",
-            "2Sa",
-            "1Ki",
-            "2Ki",
-            "1Ch",
-            "2Ch",
-            "Ezr",
-            "Neh",
-            "Est",
-            "Job",
-            "Psa",
-            "Pro",
-            "Ecc",
-            "Sng",
-            "Isa",
-            "Jer",
-            "Lam",
-            "Ezk",
-            "Dan",
-            "Hos",
-            "Jol",
-            "Amo",
-            "Oba",
-            "Jon",
-            "Mic",
-            "Nam",
-            "Hab",
-            "Zep",
-            "Hag",
-            "Zec",
-            "Mal",
-            "Mat",
-            "Mar",
-            "Luk",
-            "Joh",
-            "Act",
-            "Rom",
-            "1Co",
-            "2Co",
-            "Gal",
-            "Eph",
-            "Phi",
-            "Col",
-            "1Th",
-            "2Th",
-            "1Ti",
-            "2Ti",
-            "Tit",
-            "Phm",
-            "Heb",
-            "Jam",
-            "1Pe",
-            "2Pe",
-            "1Jo",
-            "2Jo",
-            "3Jo",
-            "Jud",
-            "Rev"
-        };
-
         /* protected */
-        public static int[][] LAST_VERSE =
-{
+        public static int[][] LAST_VERSE_OT =
+        {
         // Genesis
         new int[]
         {
@@ -642,6 +303,12 @@ namespace BibleTagging
         {
            14,  17,  18,   6,
         },
+    };
+
+
+        /* protected */
+        public static int[][] LAST_VERSE_NT =
+        {
         // Matthew
         new int[]
         {
@@ -778,7 +445,7 @@ namespace BibleTagging
         // III John
         new int[]
         {
-           15,
+           14,
         },
         // Jude
         new int[]

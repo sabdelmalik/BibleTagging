@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BibleTaggingPreperation
+namespace BibleTagging
 {public class BerkeleyAligner
     {
         private string alignerFolderName = "berkeleyaligner";

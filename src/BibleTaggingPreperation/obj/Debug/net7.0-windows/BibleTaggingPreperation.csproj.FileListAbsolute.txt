@@ -1,5 +1,4 @@
 C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperation\obj\Debug\net7.0-windows\BibleTaggingPreperation.csproj.AssemblyReference.cache
-C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperation\obj\Debug\net7.0-windows\BibleTaggingPreperation.Form1.resources
 C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperation\obj\Debug\net7.0-windows\BibleTaggingPreperation.csproj.GenerateResource.cache
 C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperation\obj\Debug\net7.0-windows\BibleTaggingPreperation.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperation\obj\Debug\net7.0-windows\BibleTaggingPreperation.AssemblyInfoInputs.cache
@@ -15,3 +14,4 @@ C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperatio
 C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperation\obj\Debug\net7.0-windows\BibleTaggingPreperation.pdb
 C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperation\obj\Debug\net7.0-windows\BibleTaggingPreperation.genruntimeconfig.cache
 C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperation\obj\Debug\net7.0-windows\ref\BibleTaggingPreperation.dll
+C:\Users\samim\Documents\MyProjects\STEP\BibleTagging\src\BibleTaggingPreperation\obj\Debug\net7.0-windows\BibleTagging.BibleTaggingPreperationForm.resources
