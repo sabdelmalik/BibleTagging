@@ -60,7 +60,6 @@ namespace BibleTaggingUtil
 #if DEBUG
             generateSWORDFilesToolStripMenuItem.Visible = false;
 #else
-            nextVerseToolStripMenuItem.Visible = false;
             saveHebrewToolStripMenuItem.Visible = false;
             saveKJVPlainToolStripMenuItem.Visible = false;
             usfmToolStripMenuItem.Visible = false;
