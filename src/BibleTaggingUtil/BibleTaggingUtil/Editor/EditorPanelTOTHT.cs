@@ -9,7 +9,7 @@ namespace BibleTaggingUtil.Editor
 {
     partial class EditorPanel
     {
-        private void PopulateTOHTHView(Dictionary<int, VerseWord> verseWords)
+        private void PopulateTOHTHView(Verse verseWords)
         {
             List<string> words = new List<string>();
             List<string> hebrew = new List<string>();
@@ -18,9 +18,8 @@ namespace BibleTaggingUtil.Editor
 
             for (int i = 0; i < verseWords.Count; i++)
             {
-                int key = verseWords.Keys.ToArray()[i];
-                VerseWord verseWord = verseWords[key];
-                words.Add(verseWord.English);
+                VerseWord verseWord = verseWords[i];
+                words.Add(verseWord.Word);
                 hebrew.Add(verseWord.Hebrew);
                 transliteration.Add(verseWord.Transliteration);
                 if (verseWord.Strong.Length > 0)

@@ -17,6 +17,9 @@
     <Compile Update="Editor\EditorPanel.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="Editor\EditorPanelKJV.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="Editor\EditorPanelTAGNT.cs">
       <SubType>Form</SubType>
     </Compile>
