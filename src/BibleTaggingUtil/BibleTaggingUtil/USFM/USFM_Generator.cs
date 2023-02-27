@@ -26,6 +26,8 @@ namespace SM.Bible.Formats.USFM
         string VersionTitle = string.Empty;
         string usfmRefFolder = string.Empty;
 
+        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
         public USFM_Generator(BibleTaggingForm parent, ConfigurationHolder config )
         {
             this.parent = parent;
@@ -45,14 +47,14 @@ namespace SM.Bible.Formats.USFM
         {
             ReadUSFM();
 
-            foreach (string key in parent.TargetVersionUpdates.Keys)
+            foreach (string key in parent.Target.Bible.Keys)
             {
                 string reference = key;
                 int idx = reference.IndexOf(' ');
                 string altName = reference.Substring(0, idx);
                 string usbName = string.Empty;
-                int bookIndex = Array.IndexOf(Constants.osisAltNames, altName);
-                if (Constants.osisAltNames.Contains(altName))
+                int bookIndex = Array.IndexOf(Constants.osisAltNames, textInfo.ToTitleCase(altName));
+                if (Constants.osisAltNames.Contains(altName, StringComparer.OrdinalIgnoreCase))
                     usbName = Constants.ubsNames[bookIndex];
                 else
                 {
@@ -61,7 +63,6 @@ namespace SM.Bible.Formats.USFM
 
                 reference = reference.Replace(altName, usbName).ToUpper();
 
-                string taggedText = parent.TargetVersionUpdates[key];
                 EntryMap map = verseMap[reference];
                 USFM_Entry entry = bible[usbName.ToUpper()][map.Index];
                 string usfmText = entry.Text;
@@ -70,81 +71,33 @@ namespace SM.Bible.Formats.USFM
                 {
                     int x = 0;
                 }
-                entry.Text = MergeVerse(taggedText, usfmText, bookIndex);
+                entry.Text = MergeVerse(parent.Target.Bible[key], usfmText, bookIndex);
 
             }
             SaveUSFMBible();
         }
 
-        private string MergeVerse(string taggedVerse, string usfm, int bookIndex)
+        private string MergeVerse(Verse verseWords, string usfm, int bookIndex)
         {
             string result = string.Empty;
-
-            string[] verseParts = taggedVerse.Trim().Split(' ');
-            // count verse words
             List<string> words = new List<string>();
             List<string> tags = new List<string>();
-            string tempWord = string.Empty;
-            string tmpTag = string.Empty;
-            for (int i = 0; i < verseParts.Length; i++)
-            {
-                if (!string.IsNullOrEmpty(verseParts[i]) && verseParts[i][0] != '<' && verseParts[i][0] != '(')
-                {
-                    // This is a word
-                    // was tag pending?
-                    if (!string.IsNullOrEmpty(tmpTag))
-                    {
-                        // yes there was a tag, check if it should be empty.
-                        if (tmpTag == "<>" || tmpTag.Contains("???"))
-                            tmpTag = string.Empty;
-                        tags.Add(tmpTag);                        
-                    }
-                    tmpTag = string.Empty;
-
-                    // now add the word
-                    tempWord += (string.IsNullOrEmpty(tempWord)) ? verseParts[i] : (" " + verseParts[i]);
-                    if (i == verseParts.Length - 1)
-                    {
-                        // last word
-                        words.Add(tempWord);
-                    }
-                }
-                else
-                {
-                    // this is a tag
-                    // was a word pending?
-                    if (!string.IsNullOrEmpty(tempWord))
-                        words.Add(tempWord);
-                    tempWord = string.Empty;
-
-                    if (verseParts[i] == "<>" || tmpTag.Contains("???"))
-                    {
-                        tmpTag = "<>";
-                    }
-                    else
-                    {
-                        tmpTag += (string.IsNullOrEmpty(tmpTag)) ? verseParts[i] : (" " + verseParts[i]);
-                        tmpTag = tmpTag.Replace(".", "");
-                        if (i == verseParts.Length - 1)
-                        {
-                            // last word
-                            if (tmpTag.EndsWith('.'))
-                                tmpTag.Remove(tmpTag.Length - 1, 1);
-
-                            if (tmpTag == "<>" || tmpTag.Contains("???"))
-                                tmpTag = string.Empty;
-
-                            tags.Add(tmpTag);
-                        }
-                    }
-                }
-            }
 
             String prfx = (bookIndex > 38) ? "G" : "H";
-            for (int i = 0; i < tags.Count; i++)
+            for (int i = 0; i < verseWords.Count; i++)
             {
-                tags[i] = tags[i].Replace("<", prfx).Replace(">", "");
+                words.Add(verseWords[i].Word);
+                string tmpTag = string.Empty;
+                for (int j = 0; j < verseWords[i].Strong.Length; j++)
+                    if(!string.IsNullOrEmpty(verseWords[i].Strong[j]))
+                       tmpTag += prfx + verseWords[i].Strong[j] + " ";
+                tags.Add(tmpTag.Trim());
             }
+
+//            for (int i = 0; i < tags.Count; i++)
+//            {
+//                tags[i] = tags[i].Replace("<", prfx).Replace(">", "");
+//            }
 
             // \v 1 \w فِي الْبَدْءِ|strong="H7225"\w* \w خَلَقَ|strong="H1254"\w* \w اللهُ|strong="H0430"\w* \w السَّمَاوَاتِ|strong="H8064"\w* \w وَالأَرْضَ|strong="H0776"\w*. 
             for (int i = 0; i < words.Count; i++)
@@ -294,9 +247,9 @@ namespace SM.Bible.Formats.USFM
                 TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
                 string code = textInfo.ToTitleCase(id.Code.ToLower());
                   
-                if (Constants.ubsNames.Contains(code))
+                if (Constants.ubsNames.Contains(code, StringComparer.OrdinalIgnoreCase))
                 {
-                    string fileNamePrefix = Constants.usfmFileNamePrefixes[Array.IndexOf(Constants.ubsNames, code)];
+                    string fileNamePrefix = Constants.usfmFileNamePrefixes[Array.IndexOf(Constants.ubsNames, textInfo.ToTitleCase(code))];
                     fileName = string.Format("{0}{1}-{2}.{3}",
                                         fileNamePrefix.ToUpper(),
                                         usfmConf[UsfmConstants.usfmLang].ToLower(),

@@ -26,7 +26,7 @@ namespace BibleTaggingUtil.Editor
 
 
 
-        private BibleTaggingForm parent;
+        private BibleTaggingForm container;
         private BrowserPanel browser;
         private VerseSelectionPanel verse;
 
@@ -35,6 +35,17 @@ namespace BibleTaggingUtil.Editor
         private System.Timers.Timer tempTimer = null;
 
         public bool TargetDirty { get; set; }
+
+        class VerseDetails
+        {
+            public VerseDetails()
+            {
+                OldTestament = false;
+            }
+            public bool OldTestament { get; set; }
+            public string[] VerseWords { get; set; }
+            public string[] VerseTags { get; set; }
+        }
 
         #region Constructors
         public EditorPanel()
@@ -45,7 +56,7 @@ namespace BibleTaggingUtil.Editor
             this.CloseButton = false;
         }
 
-        public EditorPanel(BibleTaggingForm parent, BrowserPanel browser, VerseSelectionPanel verse)
+        public EditorPanel(BibleTaggingForm container, BrowserPanel browser, VerseSelectionPanel verse)
         {
             InitializeComponent();
 
@@ -53,7 +64,12 @@ namespace BibleTaggingUtil.Editor
             this.CloseButtonVisible = false;
             this.CloseButton = false;
 
-            this.parent = parent;
+            System.Drawing.Image img = picRedo.Image;
+            img.RotateFlip(RotateFlipType.Rotate180FlipY);
+            picRedo.Image = img;
+            //picRedo.Invalidate();
+
+            this.container = container;
             this.browser = browser;
             this.verse = verse;
 
@@ -84,10 +100,6 @@ namespace BibleTaggingUtil.Editor
             dgvTargetVerse.DragDrop += DgvTargetVerse_DragDrop;
 
             dgvTargetVerse.CellEnter += DgvTargetVerse_CellEnter;
-
-
-            this.tbReferenceBible.DoubleClick += TbReferenceBible_DoubleClick;
-            this.tbTargetBible.DoubleClick += TbTargetBible_DoubleClick;
 
             dgvReferenceVerse.CellContentDoubleClick += Dgv_CellContentDoubleClick;
             dgvTargetVerse.CellContentDoubleClick += Dgv_CellContentDoubleClick;
@@ -133,54 +145,6 @@ namespace BibleTaggingUtil.Editor
                 SaveVerse(tbCurrentReference.Text);
             }
         }
-        public void SaveVerse(string reference)
-        {
-            string verse = (string)dgvTargetVerse[0, 0].Value + " ";
-            string tag = (string)dgvTargetVerse[0, 1].Value;
-            if (string.IsNullOrEmpty(tag))
-                verse += "<>";
-            else
-                verse += tag;
-
-            for (int i = 1; i < dgvTargetVerse.Columns.Count; i++)
-            {
-                verse += " " + (string)dgvTargetVerse[i, 0].Value + " ";
-                tag = (string)dgvTargetVerse[i, 1].Value;
-                if (string.IsNullOrEmpty(tag))
-                    verse += "<>";
-                else
-                    verse += tag;
-            }
-
-            if (parent.TargetVersionUpdates.ContainsKey(reference))
-            {
-                parent.TargetVersionUpdates[reference] = verse;
-            }
-            else
-            {
-                parent.TargetVersionUpdates.Add(reference, verse);
-            }
-        }
-
-        public void SaveCurrentVerse1()
-        {
-            if (!string.IsNullOrEmpty(tbCurrentReference.Text) && dgvTargetVerse.Columns.Count > 0)
-            {
-                // save current target verse
-                Dictionary<int, string[]> verseDict = new Dictionary<int, string[]>();
-                for (int i = 0; i < dgvTargetVerse.Columns.Count; i++)
-                {
-                    string[] wordColumn = new string[2];
-                    wordColumn[0] = (string)dgvTargetVerse[i, 0].Value;
-                    wordColumn[1] = (string)dgvTargetVerse[i, 1].Value;
-                    verseDict.Add(i, wordColumn);
-                }
-            }
-
-        }
-
-
-
         private void Verse_VerseChanged(object sender, VerseChangedEventArgs e)
         {
             string referenceVerse= string.Empty;
@@ -193,10 +157,10 @@ namespace BibleTaggingUtil.Editor
             tbCurrentReference.Text = e.VerseReference;
 
 
-            if (parent.ReferenceVersion.ContainsKey(e.VerseReference))
+            if (container.KJV.Bible.ContainsKey(e.VerseReference))
             {
-                referenceVerse = parent.ReferenceVersion[e.VerseReference];
-                PopulateReferenceVerseView(referenceVerse);
+                referenceVerse = Utils.GetVerseText(container.KJV.Bible[e.VerseReference], true);
+                PopulateReferenceVerseView(container.KJV.Bible[e.VerseReference]);
             }
             else
             {
@@ -207,30 +171,24 @@ namespace BibleTaggingUtil.Editor
             {
                 SaveVerse(oldReference);
             }
-            if (parent.TargetVersionUpdates.ContainsKey(e.VerseReference))
+            if (container.Target.Bible.ContainsKey(e.VerseReference))
             {
-                targetUpdatedVerse = parent.TargetVersionUpdates[e.VerseReference];
-                PopulateTargetUpdatedVerseView(targetUpdatedVerse);
-            }
-            else 
-            if (parent.TargetVersion.ContainsKey(e.VerseReference))
-            {
-                targetVerse = parent.TargetVersion[e.VerseReference];
-                PopulateTargetVerseView(targetVerse);
+                targetUpdatedVerse = Utils.GetVerseText(container.Target.Bible[e.VerseReference], true);
+                UpdateTargetView(container.Target.Bible[e.VerseReference]);
             }
             else
             {
                 targetVerse = e.VerseReference + " NotFound";
             }
 
-            if (parent.TOTHTDict.ContainsKey(e.VerseReference))
+            if (container.TOTHT.Bible.ContainsKey(e.VerseReference))
             {
-                Dictionary<int, VerseWord> verseWords = parent.TOTHTDict[e.VerseReference];
+                Verse verseWords = container.TOTHT.Bible[e.VerseReference];
                 PopulateTOHTHView(verseWords);
             }
-            else if (parent.TAGNTDict.ContainsKey(e.VerseReference))
+            else if (container.TAGNT.Bible.ContainsKey(e.VerseReference))
             {
-                Dictionary<int, VerseWord> verseWords = parent.TAGNTDict[e.VerseReference];
+                Verse verseWords = container.TAGNT.Bible[e.VerseReference];
                 PopulateTAGNTView(verseWords);
             }
             else
@@ -241,9 +199,9 @@ namespace BibleTaggingUtil.Editor
                 if (bookName == "1Jo") bookName = e.VerseReference.Replace("1Jo", "1Jn");
                 if (bookName == "2Jo") bookName = e.VerseReference.Replace("2Jo", "2Jn");
                 if (bookName == "3Jo") bookName = e.VerseReference.Replace("3Jo", "3Jn");
-                if (parent.TAGNTDict.ContainsKey(bookName))
+                if (container.TAGNT.Bible.ContainsKey(bookName))
                 {
-                    Dictionary<int, VerseWord> verseWords = parent.TAGNTDict[bookName];
+                    Verse verseWords = container.TAGNT.Bible[bookName];
                     PopulateTAGNTView(verseWords);
                 }
             }
@@ -261,110 +219,7 @@ namespace BibleTaggingUtil.Editor
 
         private void TempTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            //            parent.FindVerse(cbTagToFind.Text);
-        }
-
-
-        /// <summary>
-        /// Sets the reference bible text box to the path of the file (just as info)
-        /// </summary>
-        public string ReferenceBible
-        {
-            set
-            {
-                tbReferenceBible.Text = value;
-            }
-        }
-
-        /// <summary>
-        /// Sets the target bible text box to the path of the file (just as info)
-        /// </summary>
-        public string TargetBible
-        {
-            set
-            {
-                tbTargetBible.Text = value;
-            }
-        }
-
-
-        /// <summary>
-        /// Populates the reference verse data grid view with the 
-        /// verse words and tags
-        /// </summary>
-        /// <param name="verse">The reference verse including tags</param>
-        private void PopulateReferenceVerseView(string verse)
-        {
-            dgvReferenceVerse.Rows.Clear();
-
-            string[] verseParts = verse.Trim().Split(' ');
-            // count verse words
-            List<string> words = new List<string>();
-            List<string> tags = new List<string>();
-            string tempWord = string.Empty;
-            string tmpTag = string.Empty;
-            for (int i = 0; i < verseParts.Length; i++)
-            {
-                string versePart = verseParts[i].Trim();
-                if (i == 0 || (versePart[0] != '<' && versePart[0] != '(')) // add i == 0 test because a verse can not start with a tag.
-                {
-                    if (!string.IsNullOrEmpty(tmpTag))
-                        tags.Add(tmpTag);
-                    tmpTag = string.Empty;
-                    tempWord += (string.IsNullOrEmpty(tempWord)) ? verseParts[i] : (" " + verseParts[i]);
-                    if (i == verseParts.Length - 1)
-                    {
-                        // last word
-                        words.Add(tempWord);
-                    }
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(tempWord))
-                        words.Add(tempWord);
-                    tempWord = string.Empty;
-                    string thisTag = verseParts[i].Trim().
-                        Replace(",", "").
-                        Replace(".", "").
-                        Replace(";", "").
-                        Replace(":", "");
-                    if(thisTag[0] == '<')
-                        tmpTag += (string.IsNullOrEmpty(tmpTag)) ? thisTag : (" " + thisTag);
-                    if (i == verseParts.Length - 1)
-                    {
-                        // last word
-                        if (tmpTag.EndsWith('.'))
-                            tmpTag.Remove(tmpTag.Length - 1, 1);
-                        tags.Add(tmpTag);
-                    }
-
-                }
-            }
-
-            string[] verseWords = words.ToArray();
-            string[] verseTags = tags.ToArray();
-
-
-            dgvReferenceVerse.ColumnCount = verseWords.Length;
-            dgvReferenceVerse.Rows.Add(verseWords);
-            dgvReferenceVerse.Rows.Add(verseTags);
-
-            for (int i = 0; i < verseTags.Length; i++)
-            {
-                string tag = (string)dgvReferenceVerse.Rows[1].Cells[i].Value;
-                if (tag == null)
-                    continue;
-                if (tag.Contains("0410>"))
-                {
-                    dgvReferenceVerse.Rows[1].Cells[i].Style.BackColor = Color.Yellow;
-                }
-            }
-
-            dgvReferenceVerse.ClearSelection();
-
-            dgvReferenceVerse.Rows[0].ReadOnly = true;
-            dgvReferenceVerse.Rows[1].ReadOnly = true;
-
+            //            container.FindVerse(cbTagToFind.Text);
         }
 
 
@@ -542,6 +397,105 @@ namespace BibleTaggingUtil.Editor
         {
             if (e.ClickedItem.Text == MERGE_CONTEXT_MENU)
             {
+                if (currentVerse != null)
+                    undoStack.Push(new Verse(currentVerse));
+
+                int firstMergeIndex = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                for (int i = 1; i < dgvTargetVerse.SelectedCells.Count; i++)
+                {
+                    if (dgvTargetVerse.SelectedCells[i].ColumnIndex < firstMergeIndex)
+                        firstMergeIndex = dgvTargetVerse.SelectedCells[i].ColumnIndex;
+                }
+                currentVerse.Merge(firstMergeIndex, dgvTargetVerse.SelectedCells.Count);
+
+                SaveVerse(currentVerse);
+                UpdateTargetView(currentVerse);
+            }
+            else if (e.ClickedItem.Text == SPLIT_CONTEXT_MENU)
+            {
+                if (currentVerse != null)
+                    undoStack.Push(new Verse(currentVerse));
+
+                int splitIndex = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                for (int i = 1; i < dgvTargetVerse.SelectedCells.Count; i++)
+                {
+                    if (dgvTargetVerse.SelectedCells[i].ColumnIndex < splitIndex)
+                        splitIndex = dgvTargetVerse.SelectedCells[i].ColumnIndex;
+                }
+                currentVerse.split(splitIndex);
+
+                SaveVerse(currentVerse);
+                UpdateTargetView(currentVerse);
+            }
+            else if (e.ClickedItem.Text == DELETE_CONTEXT_MENU)
+            {
+                if (currentVerse != null)
+                    undoStack.Push(new Verse(currentVerse));
+
+                int col = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                currentVerse[col].Strong = new string[] { string.Empty };
+                SaveVerse(currentVerse);
+                UpdateTargetView(currentVerse);
+            }
+            else
+            {
+                string[] strings = ((string)dgvTargetVerse.SelectedCells[0].Value).Split(' ');
+                if (strings.Length < 2) return;
+
+                if (currentVerse != null)
+                    undoStack.Push(new Verse(currentVerse));
+
+                string newText = string.Empty;
+                if (e.ClickedItem.Text == REVERSE_CONTEXT_MENU)
+                {
+                    newText = strings[strings.Length - 1];
+                    for (int i = strings.Length - 2; i >= 0; i--)
+                    {
+                        newText += " " + strings[i];
+                    }
+                    dgvTargetVerse.SelectedCells[0].Value = newText;
+
+                    int col = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                    currentVerse[col].StrongString = newText;
+                    SaveVerse(currentVerse);
+                }
+                else if (e.ClickedItem.Text == DELETE_LEFT_CONTEXT_MENU)
+                {
+                    for (int i = 1; i < strings.Length; i++)
+                    {
+                        newText += string.IsNullOrEmpty(newText) ? strings[i] : " " + strings[i];
+                    }
+                    dgvTargetVerse.SelectedCells[0].Value = newText;
+
+                    int col = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                    currentVerse[col].StrongString = newText;
+                    SaveVerse(currentVerse);
+                }
+                else if (e.ClickedItem.Text == DELETE_RIGHT_CONTEXT_MENU)
+                {
+                    for (int i = 0; i < strings.Length - 1; i++)
+                    {
+                        newText += string.IsNullOrEmpty(newText) ? strings[i] : " " + strings[i];
+                    }
+                    dgvTargetVerse.SelectedCells[0].Value = newText;
+
+                    int col = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                    currentVerse[col].StrongString = newText;
+                    SaveVerse(currentVerse);
+                }
+            }
+
+
+
+        }
+
+        private void DgvTargetVerseContextMenu_ItemClicked1(object sender, ToolStripItemClickedEventArgs e)
+        {
+            if (e.ClickedItem.Text == MERGE_CONTEXT_MENU)
+            {
+                if (currentVerse != null)
+                    undoStack.Push(new Verse(currentVerse));
+
                 string mergedText = string.Empty;
 
                 // the selected cells array is not in column index order
@@ -571,7 +525,7 @@ namespace BibleTaggingUtil.Editor
                             string currentTag = (string)dgvTargetVerse.Rows[1].Cells[columnIndex].Value;
                             if (!string.IsNullOrEmpty(currentTag) && !currentTag.Contains("???"))
                             {
-                                if(!newTag.Contains(currentTag))
+                                if (!newTag.Contains(currentTag))
                                     newTag += " " + currentTag;
                             }
                         }
@@ -579,17 +533,21 @@ namespace BibleTaggingUtil.Editor
 
                     newWords[i] = newText;
                     newTags[i] = newTag;
+                    currentVerse[i].Word = newText;
+                    currentVerse[i].StrongString = newTag;
                     columnIndex++;
                 }
 
-                dgvTargetVerse.ColumnCount = newWords.Length;
+                SaveVerse(currentVerse);
+                UpdateTargetView(currentVerse);
 
-                dgvTargetVerse.Rows.RemoveAt(0);
-                dgvTargetVerse.Rows.Insert(0, newWords);
+                /*                dgvTargetVerse.ColumnCount = newWords.Length;
 
-                dgvTargetVerse.Rows.RemoveAt(1);
-                dgvTargetVerse.Rows.Insert(1, newTags);
+                                dgvTargetVerse.Rows.RemoveAt(0);
+                                dgvTargetVerse.Rows.Insert(0, newWords);
 
+                                dgvTargetVerse.Rows.RemoveAt(1);
+                                dgvTargetVerse.Rows.Insert(1, newTags);*/
             }
             else if (e.ClickedItem.Text == SPLIT_CONTEXT_MENU)
             {
@@ -642,6 +600,17 @@ namespace BibleTaggingUtil.Editor
                     columnIndex++;
                 }
 
+                if (currentVerse != null)
+                    undoStack.Push(new Verse(currentVerse));
+
+                for (int i = 0; i < newWords.Length; i++)
+                {
+                    currentVerse[i].Word = newWords[i];
+                    currentVerse[i].StrongString = newTags[i];
+                }
+                SaveVerse(currentVerse);
+                UpdateTargetView(currentVerse);
+/*
                 dgvTargetVerse.Rows.Clear();
 
                 dgvTargetVerse.ColumnCount = newWords.Length;
@@ -659,7 +628,7 @@ namespace BibleTaggingUtil.Editor
                 dgvTargetVerse.ClearSelection();
 
                 dgvTargetVerse.Rows[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-                dgvTargetVerse.Rows[0].ReadOnly = true;
+                dgvTargetVerse.Rows[0].ReadOnly = true;*/
 
                 //                dgvTargetVerse.Rows.RemoveAt(0);
                 //                dgvTargetVerse.Rows.Insert(0, newWords);
@@ -671,37 +640,58 @@ namespace BibleTaggingUtil.Editor
             else if (e.ClickedItem.Text == DELETE_CONTEXT_MENU)
             {
                 dgvTargetVerse.SelectedCells[0].Value = string.Empty;
+                if (currentVerse != null)
+                    undoStack.Push(new Verse(currentVerse));
+
+                int col = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                currentVerse[col].Strong = new string[] { string.Empty };
+                SaveVerse(currentVerse);
             }
             else
             {
                 string[] strings = ((string)dgvTargetVerse.SelectedCells[0].Value).Split(' ');
                 if (strings.Length < 2) return;
 
+                if (currentVerse != null)
+                    undoStack.Push(new Verse(currentVerse));
+
                 string newText = string.Empty;
                 if (e.ClickedItem.Text == REVERSE_CONTEXT_MENU)
                 {
-                    newText= strings[strings.Length - 1];
-                    for(int i = strings.Length - 2; i >= 0; i--)
+                    newText = strings[strings.Length - 1];
+                    for (int i = strings.Length - 2; i >= 0; i--)
                     {
                         newText += " " + strings[i];
                     }
                     dgvTargetVerse.SelectedCells[0].Value = newText;
+
+                    int col = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                    currentVerse[col].StrongString = newText;
+                    SaveVerse(currentVerse);
                 }
                 else if (e.ClickedItem.Text == DELETE_LEFT_CONTEXT_MENU)
                 {
-                    for(int i = 1; i < strings.Length; i++)
-                    {
-                        newText += string.IsNullOrEmpty(newText)? strings[i] : " " + strings[i];
-                    }
-                    dgvTargetVerse.SelectedCells[0].Value = newText;
-                }
-                else if (e.ClickedItem.Text == DELETE_RIGHT_CONTEXT_MENU)
-                {
-                    for (int i = 0; i < strings.Length -1; i++)
+                    for (int i = 1; i < strings.Length; i++)
                     {
                         newText += string.IsNullOrEmpty(newText) ? strings[i] : " " + strings[i];
                     }
                     dgvTargetVerse.SelectedCells[0].Value = newText;
+
+                    int col = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                    currentVerse[col].StrongString = newText;
+                    SaveVerse(currentVerse);
+                }
+                else if (e.ClickedItem.Text == DELETE_RIGHT_CONTEXT_MENU)
+                {
+                    for (int i = 0; i < strings.Length - 1; i++)
+                    {
+                        newText += string.IsNullOrEmpty(newText) ? strings[i] : " " + strings[i];
+                    }
+                    dgvTargetVerse.SelectedCells[0].Value = newText;
+
+                    int col = dgvTargetVerse.SelectedCells[0].ColumnIndex;
+                    currentVerse[col].StrongString = newText;
+                    SaveVerse(currentVerse);
                 }
             }
 
@@ -823,6 +813,9 @@ namespace BibleTaggingUtil.Editor
                     newValue = currentText;
                 for (int i = 0; i < strings.Length; i++)
                 {
+                    if (strings[i].Contains('('))
+                        continue; //skip morphology
+
                     string tmp = strings[i].Trim().Replace("<", "").Replace(">", "");
                     tmp = ("0000" + tmp).Substring(tmp.Length);
                     int val = Convert.ToInt32(tmp);
@@ -833,7 +826,13 @@ namespace BibleTaggingUtil.Editor
                             newValue += string.IsNullOrEmpty(newValue) ? tmp : (" " + tmp);
                     }
                 }
+                if (currentVerse != null)
+                    undoStack.Push(new Verse(currentVerse));
+
                 dgvTargetVerse[hittest.ColumnIndex, 1].Value = newValue.Trim();
+                currentVerse[hittest.ColumnIndex].StrongString = newValue.Trim();
+                SaveVerse(currentVerse);
+
                 SelectReferenceTags(newValue.Trim());
 
                 if (data.Source.Equals(dgvTargetVerse))
@@ -930,23 +929,10 @@ namespace BibleTaggingUtil.Editor
         }
         #endregion Higlight same tag
 
-
-        private void TbTargetBible_DoubleClick(object sender, System.EventArgs e)
-        {
-            parent.LoadTargetFile();
-        }
-
-        private void TbReferenceBible_DoubleClick(object sender, System.EventArgs e)
-        {
-            parent.LoadReferenceFile();
-        }
-
-
         private void EditorPanel_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             e.IsInputKey = true;
         }
-
         private void EditorPanel_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Modifiers == Keys.PageUp)
@@ -970,38 +956,36 @@ namespace BibleTaggingUtil.Editor
             verse.MoveToNext();
         }
 
-        private void picResetVerse_Click(object sender, EventArgs e)
+        private void picRedo_Click(object sender, EventArgs e)
         {
-            string caption = "Reset Current Verse";
-            string message = "Reseting clears all tags, Continu?";
-            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-            DialogResult result = MessageBox.Show(message, caption, buttons);
-
-            if (result == System.Windows.Forms.DialogResult.Yes)
+            if (redoStack.Count > 0)
             {
+                Verse verse = redoStack.Pop();
+                if (Utils.AreReferencesEqual(tbCurrentReference.Text, verse[0].Reference))
+                {
+                    UpdateTargetView(verse);
+                }
+                SaveVerse(verse);
+            }
+        }
 
-                string targetVerse = tbCurrentReference.Text;
-                if(parent.TargetVersionUpdates.ContainsKey(targetVerse))
+        private void picUndo_Click(object sender, EventArgs e)
+        {
+            if (undoStack.Count > 0)
+            {
+                redoStack.Push(new Verse(currentVerse));
+                Verse verse = undoStack.Pop();
+                if(Utils.AreReferencesEqual(tbCurrentReference.Text, verse[0].Reference))
                 {
-                    string targetUpdatedVerse = parent.TargetVersionUpdates[targetVerse];
-                    PopulateTargetUpdatedVerseView(targetUpdatedVerse);
-
+                    UpdateTargetView(verse);
                 }
-                else if (parent.TargetVersion.ContainsKey(targetVerse))
-                {
-                    targetVerse = parent.TargetVersion[targetVerse];
-                    PopulateTargetVerseView(targetVerse);
-                }
-                else
-                {
-                    targetVerse = targetVerse + " NotFound";
-                }
+                SaveVerse(verse);
             }
         }
 
         private void picSave_Click(object sender, EventArgs e)
         {
-            parent.SaveUpdates();
+            container.Target.SaveUpdates();
         }
 
         private void picDecreaseFont_Click(object sender, EventArgs e)
@@ -1031,11 +1015,11 @@ namespace BibleTaggingUtil.Editor
 
         private void picFindTagForward_Click(object sender, EventArgs e)
         {
-            parent.FindVerse(cbTagToFind.Text);
+            container.FindVerse(cbTagToFind.Text);
         }
 
-        #endregion Buttons
 
+        #endregion Buttons
 
     }
 }

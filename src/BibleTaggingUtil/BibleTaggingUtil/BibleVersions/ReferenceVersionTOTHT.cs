@@ -10,30 +10,30 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace BibleTaggingUtil
+namespace BibleTaggingUtil.BibleVersions
 {
-    public class TOTHTReaderEx
+    public class ReferenceVersionTOTHT : BibleVersion
     {
+
+        public ReferenceVersionTOTHT(BibleTaggingForm container) : base(container) { }
 
         /// <summary>
         /// Verse words dictionary
         /// key: the word number in the verse
         /// Value: a populated VerseWord instance
         /// </summary>
-        private Dictionary<int, VerseWord> verseWords = null;
+        private Verse verseWords = null;
 
         /// <summary>
         /// Bible Dictionary
         /// Key: verse reference (xxx c:v) xxx = book name, c = chapter number, v = verse number
         /// </summary>
-        private Dictionary<string, Dictionary<int, VerseWord>> bible = new Dictionary<string, Dictionary<int, VerseWord>>();
+        // private Dictionary<string, Dictionary<int, VerseWord>> bible = new Dictionary<string, Dictionary<int, VerseWord>>();
 
         string textFilePath = string.Empty;
 
-        public Dictionary<string, Dictionary<int, VerseWord>> TOTHTDict
-        { get { return bible; } }
-
-        public bool LoadBibleFile(string textFilePath)
+        
+/*        public bool LoadBibleFile(string textFilePath)
         {
             bool result = false;
             if (File.Exists(textFilePath))
@@ -71,7 +71,7 @@ namespace BibleTaggingUtil
             //SaveUpdates();
             return result;
         }
-
+*/
         enum STATE
         {
             START,
@@ -92,20 +92,19 @@ namespace BibleTaggingUtil
 
                     try
                     {
-                        Dictionary<int, VerseWord> words = bible[verRef];
-                        int[] wordKeys = words.Keys.ToArray();
-                        VerseWord vw = words[wordKeys[0]];
-                        string verse = vw.English + " [" + vw.Hebrew + "]";
+                        Verse words = bible[verRef];
+                        VerseWord vw = words[0];
+                        string verse = vw.Word + " [" + vw.Hebrew + "]";
                         for (int j = 0; j < vw.Strong.Length; j++)
                         {
                             verse += (" <" + vw.Strong[j]) + ">";
                         }
-                        for (int k = 1; k < wordKeys.Length; k++)
+                        for (int k = 1; k < words.Count; k++)
                         {
-                            verse += " " + (words[wordKeys[k]].English + " [" + words[wordKeys[k]].Hebrew + "]");
-                            for (int j = 0; j < words[wordKeys[k]].Strong.Length; j++)
+                            verse += " " + (words[k].Word + " [" + words[k].Hebrew + "]");
+                            for (int j = 0; j < words[k].Strong.Length; j++)
                             {
-                                verse += (" <" + words[wordKeys[k]].Strong[j]) + ">";
+                                verse += (" <" + words[k].Strong[j]) + ">";
                             }
                         }
                         string line = string.Format("{0:s} {1:s}", verRef, verse);
@@ -120,10 +119,10 @@ namespace BibleTaggingUtil
                 }
 
 
-                //for (int i = 0; i < targetVersionUpdates.Keys.Count; i++)
+                //for (int i = 0; i < targetVersion.Keys.Count; i++)
                 //{
-                //    string key = targetVersionUpdates.Keys.ToArray()[i];
-                //    string line = string.Format("{0:s} {1:s}", key, targetVersionUpdates[key]); 
+                //    string key = targetVersion.Keys.ToArray()[i];
+                //    string line = string.Format("{0:s} {1:s}", key, targetVersion[key]); 
                 //    outputFile.WriteLine(line); 
                 //}
 
@@ -133,8 +132,26 @@ namespace BibleTaggingUtil
         }
 
         string currentVerseRef = string.Empty;
-        private void ParseLine(string wordLine)
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="wordLine"></param>
+        override protected void ParseLine(string wordLine)
         {
+            #region Skip the header
+            if (string.IsNullOrEmpty(wordLine))
+                return;
+            int cnt = wordLine.Count(f => (f == '\t'));
+            if (cnt != 14)
+            {
+                return;
+            }
+
+            if (wordLine.StartsWith("Ref in") || wordLine.StartsWith("======"))
+                return;
+            #endregion Skip the header
+
             string[] lineParts = wordLine.Split('\t');
             string verseRef = string.Empty;
 
@@ -160,9 +177,9 @@ namespace BibleTaggingUtil
 
             if (string.IsNullOrEmpty(currentVerseRef))
             {
-                // very firdt verse
+                // very firdst verse
                 currentVerseRef = verseRef;
-                verseWords = new Dictionary<int, VerseWord>();
+                verseWords = new Verse();
             }
 
 
@@ -170,7 +187,7 @@ namespace BibleTaggingUtil
             {
                 bible.Add(currentVerseRef, verseWords);
                 currentVerseRef = verseRef;
-                verseWords = new Dictionary<int, VerseWord>();
+                verseWords = new Verse();
             }
 
             // 1. get Hebrew word parts
@@ -298,9 +315,9 @@ namespace BibleTaggingUtil
                 strongRefs = strongList.ToArray();
                 try
                 {
-                    int wordNumber = verseWords.Count + 1;
+                    int wordNumber = verseWords.Count;
 
-                    verseWords.Add(wordNumber, new VerseWord(hebrew, englishWord, strongRefs, transliteration));
+                    verseWords[wordNumber] = new VerseWord(hebrew, englishWord, strongRefs, transliteration, currentVerseRef);
                 }
                 catch (Exception ex)
                 {

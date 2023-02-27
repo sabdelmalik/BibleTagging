@@ -225,10 +225,10 @@ namespace BibleTaggingUtil
                 int newChapter = currentChapter;
                 int newVerse = currentVerse;
 
-                if(Constants.osisNames.Contains(newBook))
+                if(Constants.osisNames.Contains(newBook, StringComparer.OrdinalIgnoreCase))
                     osisName = true;
 
-                if(Constants.osisAltNames.Contains(newBook))
+                if(Constants.osisAltNames.Contains(newBook, StringComparer.OrdinalIgnoreCase))
                     altName = true;
 
                 // bibleBooks keys are osis

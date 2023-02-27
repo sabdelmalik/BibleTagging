@@ -6,6 +6,8 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox;
 
 namespace BibleTaggingUtil.Editor
 {
@@ -14,107 +16,46 @@ namespace BibleTaggingUtil.Editor
     /// </summary>
     partial class EditorPanel
     {
+
+        private FixedSizeStack<Verse> undoStack = new FixedSizeStack<Verse>();
+        private FixedSizeStack<Verse> redoStack = new FixedSizeStack<Verse>();
+
+        private Verse currentVerse = null;
+
         /// <summary>
         /// Updates the target verse display when the verse contains tags already
         /// </summary>
         /// <param name="verse">tagged verse</param>
-        private void PopulateTargetUpdatedVerseView(string verse)
+        private void UpdateTargetView(Verse verse)
         {
             try
             {
+                currentVerse = verse;
                 bool oldTestament = false;
-                string reference = tbCurrentReference.Text;
-                if(string.IsNullOrEmpty(reference))
-                {
-                    string book = reference.Substring(0, 3);
-                    if(Constants.osisNames.Contains(book))
-                    {
-                        int i = Array.IndexOf(Constants.osisNames, book);
-                        if(i< 39)
-                        {
-                            oldTestament= true;
-                        }
-                    }
-                }
 
                 string direction = Properties.Settings.Default.TargetTextDirection;
                 dgvTargetVerse.Rows.Clear();
-                string[] verseParts = verse.Trim().Split(' ');
-                // count verse words
-                List<string> words = new List<string>();
-                List<string> tags = new List<string>();
-                string tempWord = string.Empty;
-                string tmpTag = string.Empty;
-                int test = 0;
-                for (int i = 0; i < verseParts.Length; i++)
-                {
-                    if (!string.IsNullOrEmpty(verseParts[i]) && verseParts[i][0] != '<' && verseParts[i][0] != '(')
-                    {
-                        if (!string.IsNullOrEmpty(tmpTag))
-                        {
-                            if (tmpTag == "<>")
-                                tmpTag = string.Empty;
-                            tags.Add(tmpTag);
-                        }
-                        tmpTag = string.Empty;
-                        tempWord += (string.IsNullOrEmpty(tempWord)) ? verseParts[i].Replace(":«", ": «") : (" " + verseParts[i].Replace(":«", ": «"));
-                        if (i == verseParts.Length - 1)
-                        {
-                            // last word
-                            if (direction.ToLower() == "rtl")
-                            {
-                                if (tempWord.Contains('÷'))
-                                    tempWord = tempWord.Replace("÷", "");
-                                if (tempWord.Contains('E'))
-                                    tempWord = tempWord.Replace("E", "");
-                            }
-                            words.Add(tempWord);
-                        }
-                    }
-                    else
-                    {
-                        if (!string.IsNullOrEmpty(tempWord))
-                        {
-                            if (direction.ToLower() == "rtl")
-                            {
-                                if (tempWord.Contains('÷'))
-                                    tempWord = tempWord.Replace("÷", "");
-                                if (tempWord.Contains('E'))
-                                    tempWord = tempWord.Replace("E", "");
-                            }
 
-                            words.Add(tempWord);
-                        }
-                        tempWord = string.Empty;
-                        if (verseParts[i] == "<>")
-                        {
-                            tmpTag = "<>";
-                        }
-                        else
-                        {
-                            tmpTag += (string.IsNullOrEmpty(tmpTag)) ? verseParts[i] : (" " + verseParts[i]);
-                            tmpTag = tmpTag.Replace(".", "");
-                            if (i == verseParts.Length - 1)
-                            {
-                                // last word
-                                if (tmpTag.EndsWith('.'))
-                                    tmpTag.Remove(tmpTag.Length - 1, 1);
-                                tags.Add(tmpTag);
-                            }
-                        }
-                    }
+                string[] verseWords = new string[verse.Count];
+                string[] verseTags = new string[verse.Count];
+                for(int i = 0; i < verse.Count; i++)
+                {
+                    verseWords[i] = verse[i].Word;
+                    for (int j = 0; j < verse[i].Strong.Length; j++)
+                        verseTags[i] += "<" + verse[i].Strong[j] + "> ";
+                    verseTags[i] = verseTags[i].Trim();
                 }
 
-                string[] verseWords = words.ToArray();
-                string[] verseTags = tags.ToArray();
                 int col = -1;
                 for (int i = 0; i < verseTags.Length; i++)
                 {
-                    if (verseTags[i].Contains("3068")) //verseTags[i].Contains("???") || verseTags[i].Contains("0000"))
-                    {
-                        col = i;
-                        break;
-                    }
+                    // if (verseTags[i].Contains("3068")) //verseTags[i].Contains("???") || verseTags[i].Contains("0000"))
+                    //{
+                    //    col = i;
+                    //    break;
+                    // }
+                    if (verseTags[i] == "<>")
+                        verseTags[i] = string.Empty;
                 }
 
 
@@ -131,6 +72,7 @@ namespace BibleTaggingUtil.Editor
                     string tag = (string)dgvTargetVerse.Rows[1].Cells[i].Value;
                     if (tag == null)
                         continue;
+
                     if (tag.Contains("3068") && oldTestament)
                     {
                         dgvTargetVerse.Rows[1].Cells[i].Style.ForeColor = Color.Red;
@@ -167,39 +109,46 @@ namespace BibleTaggingUtil.Editor
             }
         }
 
-        /// <summary>
-        /// Updates the target verse display for a verse without any tagging
-        /// </summary>
-        /// <param name="verse">verse with no taggs</param>
-        private void PopulateTargetVerseView(string verse)
+
+        public void SaveVerse(Verse verse)
         {
-
-            dgvTargetVerse.Rows.Clear();
-
-            string[] verseParts = verse.Split(' ');
-            dgvTargetVerse.ColumnCount = verseParts.Length;
-
-
-            dgvTargetVerse.Rows.Add(verseParts);
-            dgvTargetVerse.Rows.Add();
-
-            string direction = Properties.Settings.Default.TargetTextDirection;
-            if (direction.ToLower() == "rtl")
+            container.Target.Bible[verse[0].Reference] = verse;
+            if (!Utils.AreReferencesEqual(tbCurrentReference.Text, verse[0].Reference))
             {
-                for (int i = 0; i < verseParts.Length; i++)
-                {
-                    dgvTargetVerse.Columns[i].DisplayIndex = verseParts.Length - i - 1;
-                }
+                container.VerseSelectionPanel.GotoVerse(verse[0].Reference);
+            }
+        }
+
+        public void SaveVerse(string reference)
+        {
+            Verse verse = new Verse();
+
+            for (int i = 0; i < dgvTargetVerse.Columns.Count; i++)
+            {
+                string[] tags;
+                string tag = ((string)dgvTargetVerse[i, 1].Value).Trim();
+                if (string.IsNullOrEmpty(tag))
+                    tags = new string[] { "<>" };
+                else
+                    tags = tag.Split(' ');
+
+                // remove <> from tags
+                for (int j = 0; j < tags.Length; j++)
+                    tags[j] = tags[j].Replace("<", "").Replace(">", "");
+
+                verse[i] = new VerseWord((string)dgvTargetVerse[i, 0].Value, tags, reference);
             }
 
-            dgvTargetVerse.ClearSelection();
-
-            dgvTargetVerse.Rows[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-
-            dgvTargetVerse.Rows[0].ReadOnly = true;
-
-
+            if (container.Target.Bible.ContainsKey(reference))
+            {
+                container.Target.Bible[reference] = verse;
+            }
+            else
+            {
+                container.Target.Bible.Add(reference, verse);
+            }
         }
+
 
     }
 }
