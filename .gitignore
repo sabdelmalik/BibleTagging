@@ -1,5 +1,5 @@
-releases/*
-bin/*
-Bibles/*
+releases/
+bin/
+Bibles/
 BibleModuleDev/
 !.gitignore

@@ -831,14 +831,15 @@ namespace BibleTaggingUtil.Editor
 
                 dgvTargetVerse[hittest.ColumnIndex, 1].Value = newValue.Trim();
                 currentVerse[hittest.ColumnIndex].StrongString = newValue.Trim();
-                SaveVerse(currentVerse);
 
                 SelectReferenceTags(newValue.Trim());
 
                 if (data.Source.Equals(dgvTargetVerse))
                 {
                     dgvTargetVerse[data.ColumnIndex, 1].Value = string.Empty;
+                    currentVerse[data.ColumnIndex].StrongString = string.Empty;
                 }
+                SaveVerse(currentVerse);
 
                 dgvTargetVerse.ClearSelection();
                 dgvTargetVerse[hittest.ColumnIndex, 1].Selected= true;
