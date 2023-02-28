@@ -247,7 +247,7 @@ namespace BibleTaggingUtil
 
                 if (!Directory.Exists(taggedFolder))
                 {
-                    DialogResult res = MessageBox.Show("Tagged folder does not exist\r\nSelect another Bible Folder?", "Error!", MessageBoxButtons.YesNo);
+                    DialogResult res = ShowMessageBox("Tagged folder does not exist\r\nSelect another Bible Folder?", "Error!", MessageBoxButtons.YesNo);
                     if (res == DialogResult.Yes)
                     {
                         biblesFolder = string.Empty;
@@ -1005,7 +1005,7 @@ namespace BibleTaggingUtil
                     // backup currentModule
                     if(Directory.Exists(backupPath))
                     {
-                        DialogResult res = MessageBox.Show("Overwrite old backup", "Do you want to overwrite existing Backup folder\r\n" + backupPath, MessageBoxButtons.YesNo);
+                        DialogResult res = ShowMessageBox("Overwrite old backup", "Do you want to overwrite existing Backup folder\r\n" + backupPath, MessageBoxButtons.YesNo);
                         if (res == DialogResult.Yes)
                         {
                             Directory.Delete(backupPath, true);
