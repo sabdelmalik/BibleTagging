@@ -135,6 +135,12 @@ namespace BibleTaggingUtil.Editor
         public void ClearCurrentVerse()
         {
             tbCurrentReference.Text = string.Empty;
+            dgvTargetVerse.Rows.Clear();
+            dgvTargetVerse.ColumnCount = 0;
+            dgvReferenceVerse.Rows.Clear();
+            dgvReferenceVerse.ColumnCount = 0;
+            dgvTOTHTView.Rows.Clear();
+            dgvTOTHTView.ColumnCount = 0;
         }
 
         public void SaveCurrentVerse()

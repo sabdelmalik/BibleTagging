@@ -31,10 +31,11 @@ namespace BibleTaggingUtil.Editor
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.Panel panel1;
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorPanel));
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditorPanel));
+            this.picRedo = new System.Windows.Forms.PictureBox();
             this.picFindTagForward = new System.Windows.Forms.PictureBox();
             this.picDecreaseFont = new System.Windows.Forms.PictureBox();
             this.picIncreaseFont = new System.Windows.Forms.PictureBox();
@@ -51,9 +52,9 @@ namespace BibleTaggingUtil.Editor
             this.dgvTOTHTView = new System.Windows.Forms.DataGridView();
             this.dgvTargetVerse = new System.Windows.Forms.DataGridView();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.picRedo = new System.Windows.Forms.PictureBox();
             panel1 = new System.Windows.Forms.Panel();
             panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRedo)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFindTagForward)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDecreaseFont)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picIncreaseFont)).BeginInit();
@@ -73,7 +74,6 @@ namespace BibleTaggingUtil.Editor
             this.splitContainer1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTOTHTView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTargetVerse)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picRedo)).BeginInit();
             this.SuspendLayout();
             // 
             // panel1
@@ -95,6 +95,18 @@ namespace BibleTaggingUtil.Editor
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(1299, 72);
             panel1.TabIndex = 8;
+            // 
+            // picRedo
+            // 
+            this.picRedo.Image = ((System.Drawing.Image)(resources.GetObject("picRedo.Image")));
+            this.picRedo.Location = new System.Drawing.Point(405, 15);
+            this.picRedo.Name = "picRedo";
+            this.picRedo.Size = new System.Drawing.Size(40, 40);
+            this.picRedo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picRedo.TabIndex = 21;
+            this.picRedo.TabStop = false;
+            this.toolTip1.SetToolTip(this.picRedo, "Redo");
+            this.picRedo.Click += new System.EventHandler(this.picRedo_Click);
             // 
             // picFindTagForward
             // 
@@ -326,18 +338,6 @@ namespace BibleTaggingUtil.Editor
             this.dgvTargetVerse.Size = new System.Drawing.Size(1299, 255);
             this.dgvTargetVerse.TabIndex = 2;
             // 
-            // picRedo
-            // 
-            this.picRedo.Image = ((System.Drawing.Image)(resources.GetObject("picRedo.Image")));
-            this.picRedo.Location = new System.Drawing.Point(405, 15);
-            this.picRedo.Name = "picRedo";
-            this.picRedo.Size = new System.Drawing.Size(40, 40);
-            this.picRedo.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picRedo.TabIndex = 21;
-            this.picRedo.TabStop = false;
-            this.toolTip1.SetToolTip(this.picRedo, "Redo");
-            this.picRedo.Click += new System.EventHandler(this.picRedo_Click);
-            // 
             // EditorPanel
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -350,6 +350,7 @@ namespace BibleTaggingUtil.Editor
             this.Load += new System.EventHandler(this.EditorPanel_Load);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picRedo)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picFindTagForward)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDecreaseFont)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picIncreaseFont)).EndInit();
@@ -369,7 +370,6 @@ namespace BibleTaggingUtil.Editor
             this.splitContainer1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvTOTHTView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTargetVerse)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picRedo)).EndInit();
             this.ResumeLayout(false);
 
         }
