@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace BibleTagging
 {
@@ -9,12 +11,15 @@ namespace BibleTagging
         private string workFolder = string.Empty;
         private string alignerPath = string.Empty;
         private string bibleFileName = string.Empty;
+        private string bibleFilePath = string.Empty;
         private string otFilePath = string.Empty;
         private string ntFilePath = string.Empty;
 
         private const char sourceBkChSeperator = ' ';
         private const char sourceChVsSeperator = ':';
         private const char sourceVsTxSeperator = ' ';
+
+        SpecialFunctions sf;
 
         private BibleVersification bibleVersification = null;
 
@@ -51,19 +56,21 @@ namespace BibleTagging
             }
         }
 
+        public void TraceError(string method, string text)
+        {
+            Trace(string.Format("Error: {0}::{1}",method, text), Color.Red);
+        }
+
+
         #endregion Trace
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Trace("Loding ...", Color.Blue);
+
             bibleVersification = new BibleVersification(this);
 
-            PrepareFolders();
-
-
-
-
-            Trace(workFolder, Color.Blue);
-            
+            PrepareFolders();           
         }
 
         private void PrepareFolders()
@@ -92,9 +99,16 @@ namespace BibleTagging
             DialogResult result = openFileDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                string filePath = openFileDialog1.FileName;
-                ValidateBibleFile(filePath);
-                CheckAndSplit(filePath);
+                bibleFilePath = openFileDialog1.FileName;
+
+                sf = new SpecialFunctions(this);
+                bibleFilePath = sf.ConvertToUbsNames(bibleFilePath);
+                Trace("\r\nProcessing: " + bibleFilePath, Color.Blue);
+                if (!string.IsNullOrEmpty(bibleFilePath))
+                {
+                    ValidateBibleFile(bibleFilePath);
+                    Split(bibleFilePath);
+                }
             }
         }
 
@@ -174,7 +188,7 @@ namespace BibleTagging
             }
         }
 
-            private void CheckAndSplit(string bibleFile)
+        private void Split(string bibleFile)
         {
             List<string> ot = new List<string>();
             List<string> nt = new List<string>();
@@ -187,76 +201,91 @@ namespace BibleTagging
             if (File.Exists(otFilePath)) File.Delete(otFilePath);
             if (File.Exists(ntFilePath)) File.Delete(ntFilePath);
 
-            string[] bibleNames = Constants.osisNames;
+            string[] bibleNames = Constants.ubsNames;
+
 
             using (StreamReader sr = new StreamReader(bibleFile))
             {
                 while (!sr.EndOfStream)
                 {
                     var line = sr.ReadLine();
-                    if (line != null)
+                    if (!string.IsNullOrEmpty(line))
                     {
-                        int idx = line.IndexOf(' ');
-                        if (idx < 2)
+                        try
                         {
-                            Trace("Bad line: " + line, Color.Red);
-                        }
-                        string bookName = line.Substring(0, idx); ;
-                        if (!bibleNames.Contains(bookName))
-                        {
-                            bibleNames = Constants.osisAltNames;
+                            int idx = line.IndexOf(' ');
+                            if (idx < 2)
+                            {
+                                TraceError(MethodBase.GetCurrentMethod().Name, "Bad line: " + line);
+                            }
+                            string bookName = line.Substring(0, idx); ;
                             if (!bibleNames.Contains(bookName))
                             {
-                                bibleNames = Constants.ubsNames;
+                                bibleNames = Constants.osisAltNames;
                                 if (!bibleNames.Contains(bookName))
                                 {
-                                    Trace("Failed to find book name: " + line, Color.Red);
-                                    continue;
+                                    bibleNames = Constants.ubsNames;
+                                    if (!bibleNames.Contains(bookName))
+                                    {
+                                        TraceError(MethodBase.GetCurrentMethod().Name, "Failed to find book name: " + line);
+                                        continue;
+                                    }
                                 }
                             }
+                            int bookIndex = Array.IndexOf(bibleNames, bookName);
+                            if (bookIndex < 39)
+                                ot.Add(line);
+                            else
+                                nt.Add(line);
                         }
-                        int bookIndex = Array.IndexOf(bibleNames, bookName);
-                        if (bookIndex < 39)
-                            ot.Add(line);
-                        else
-                            nt.Add(line);
-
+                        catch (Exception ex)
+                        {
+                            TraceError(MethodBase.GetCurrentMethod().Name, ex.Message);
+                        }
                     }
                 }
             }
 
-            if (ot.Count != Constants.otVerses)
+            bool otNRSV_OK = (ot.Count == bibleVersification.GetVerseCount(BibleVersion.NRSV, Testament.OT));
+            bool ntNRSV_OK = (nt.Count == bibleVersification.GetVerseCount(BibleVersion.NRSV, Testament.NT));
+            bool otKJV_OK = (ot.Count == bibleVersification.GetVerseCount(BibleVersion.KJV, Testament.OT));
+            bool ntKJV_OK = (nt.Count == bibleVersification.GetVerseCount(BibleVersion.KJV, Testament.NT));
+
+            if (otKJV_OK && ntKJV_OK)
             {
-                Trace(string.Format("OT verse count is {0} should be {1}", ot.Count, Constants.otVerses), Color.Red);
+                Trace("Verse Count Matched KJV", Color.Green);
+            }
+            else if (otNRSV_OK && ntNRSV_OK)
+            {
+                Trace("Verse Count Matched NRSV", Color.Green);
             }
             else
             {
-                using (StreamWriter swOT = new StreamWriter(otFilePath))
+                TraceError(MethodBase.GetCurrentMethod().Name, string.Format("Verse Counts did not match! OT = {0}, NT = {1}", ot.Count, nt.Count));
+
+                if (sf != null)
                 {
-                    for(int i = 0; i < ot.Count; i++)
-                    {
-                        swOT.WriteLine(ot[i]);
-                    }
-                    
+                    if (!otNRSV_OK || !otKJV_OK) sf.ReportMismatchOT();
+                    if (!ntNRSV_OK || !ntKJV_OK) sf.ReportMismatchNT();
                 }
+                //return;
             }
-
-            if (nt.Count != Constants.ntVerses)
+            using (StreamWriter swOT = new StreamWriter(otFilePath))
             {
-                Trace(string.Format("NT verse count is {0} should be {1}", nt.Count, Constants.ntVerses), Color.Red);
-            }
-            else
-            {
-                using (StreamWriter swNT = new StreamWriter(ntFilePath))
+                for (int i = 0; i < ot.Count; i++)
                 {
-                    for (int i = 0; i < nt.Count; i++)
-                    {
-                        swNT.WriteLine(nt[i]);
-                    }
-
+                    swOT.WriteLine(ot[i]);
                 }
-            }
 
+            }
+            using (StreamWriter swNT = new StreamWriter(ntFilePath))
+            {
+                for (int i = 0; i < nt.Count; i++)
+                {
+                    swNT.WriteLine(nt[i]);
+                }
+
+            }
         }
     }
 }

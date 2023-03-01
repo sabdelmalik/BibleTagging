@@ -27,6 +27,10 @@ namespace BibleTaggingUtil
             }
         }
 
+        public void UpdateWord(int index, string word)
+        {
+            verse[index].Word = word;
+        }
         /// <summary>
         /// returns the number of words in the verse
         /// </summary>

@@ -59,10 +59,12 @@ namespace BibleTaggingUtil
                 {
                     for(int i= 0; i < this.Strong.Length; i++)
                     {
-                        temp += "<" + this.Strong[i] + "> ";
+                        temp += "<" + (this.Strong[i].Contains("???")? "" : this.Strong[i]) + "> ";
                     }
                 }
-                return temp.Trim();
+                if (temp != "<>")
+                    temp = temp.Replace("<>", "").Trim();
+                return temp;
             }
             set
             {
@@ -85,10 +87,28 @@ namespace BibleTaggingUtil
 
         public static VerseWord operator +(VerseWord a, VerseWord b)
         {
+            List<string> st = new List<string>();
+            bool blankDetected = false;
+            for(int i = 0; i < a.Strong.Length; i++)
+            {
+                if (string.IsNullOrEmpty(a.Strong[i]) || a.Strong[i].Contains("???")|| a.Strong[i].Contains("0000"))
+                    blankDetected = true;
+                else
+                    st.Add(a.Strong[i]);
+            }
+            for (int i = 0; i < b.Strong.Length; i++)
+            {
+                if (string.IsNullOrEmpty(b.Strong[i]) || b.Strong[i].Contains("???") || b.Strong[i].Contains("0000"))
+                    blankDetected = true;
+                else if(!st.Contains(b.Strong[i]))
+                    st.Add(b.Strong[i]);
+            }
+            if (st.Count == 0 && blankDetected)
+                st.Add("");
 
             return new VerseWord(
                 (a.Word + " " + b.Word).Trim(),
-                (a.StrongString + " " + b.StrongString).Trim(),
+                st.ToArray(),
                 a.Reference
                 );
         }

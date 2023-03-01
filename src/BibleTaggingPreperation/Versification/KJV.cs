@@ -31,7 +31,7 @@ namespace BibleTagging.Versification
 {
     internal class KJV
     {
-        /* protected */
+
         public static int[][] LAST_VERSE_OT =
         {
         // Genesis

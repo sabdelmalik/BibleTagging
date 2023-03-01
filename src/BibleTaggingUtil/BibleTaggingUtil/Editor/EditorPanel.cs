@@ -104,6 +104,7 @@ namespace BibleTaggingUtil.Editor
             dgvReferenceVerse.CellContentDoubleClick += Dgv_CellContentDoubleClick;
             dgvTargetVerse.CellContentDoubleClick += Dgv_CellContentDoubleClick;
             dgvTOTHTView.CellContentDoubleClick += DgvTOTHTView_CellContentDoubleClick;
+
             verse.VerseChanged += Verse_VerseChanged;
 
             this.PreviewKeyDown += EditorPanel_PreviewKeyDown;
@@ -124,6 +125,12 @@ namespace BibleTaggingUtil.Editor
 
         private void DgvTargetVerse_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+            if(e.RowIndex == 0)
+            {
+                // word edited
+                string newWord = (string)dgvTargetVerse[e.ColumnIndex, e.RowIndex].Value;
+                currentVerse.UpdateWord(e.ColumnIndex, newWord);
+            }
             TargetDirty = true;
         }
 

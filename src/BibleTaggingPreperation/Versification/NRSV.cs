@@ -33,8 +33,6 @@ namespace BibleTagging.Versification
     {
         public static int[][] LAST_VERSE_OT = KJV.LAST_VERSE_OT;
 
-
-        /* protected */
         public static int[][] LAST_VERSE_NT =
 {
         // Matthew
