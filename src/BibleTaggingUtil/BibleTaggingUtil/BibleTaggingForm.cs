@@ -60,7 +60,6 @@ namespace BibleTaggingUtil
 #if DEBUG
             generateSWORDFilesToolStripMenuItem.Visible = false;
 #else
-            nextVerseToolStripMenuItem.Visible = false;
             saveHebrewToolStripMenuItem.Visible = false;
             saveKJVPlainToolStripMenuItem.Visible = false;
             usfmToolStripMenuItem.Visible = false;
@@ -220,6 +219,7 @@ namespace BibleTaggingUtil
                     }
                 }
 
+                config = new ConfigurationHolder();
                 string confResult = config.ReadBiblesConfig(biblesFolder);
                 if (!string.IsNullOrEmpty(confResult))
                 {
@@ -247,7 +247,7 @@ namespace BibleTaggingUtil
 
                 if (!Directory.Exists(taggedFolder))
                 {
-                    DialogResult res = MessageBox.Show("Tagged folder does not exist\r\nSelect another Bible Folder?", "Error!", MessageBoxButtons.YesNo);
+                    DialogResult res = ShowMessageBox("Tagged folder does not exist\r\nSelect another Bible Folder?", "Error!", MessageBoxButtons.YesNo);
                     if (res == DialogResult.Yes)
                     {
                         biblesFolder = string.Empty;
@@ -263,7 +263,26 @@ namespace BibleTaggingUtil
                     break;
                 }
             }
-            this.Closing += BibleTaggingForm_Closing;
+
+            string[] files = Directory.GetFiles(taggedFolder);
+            if (files.Length > 0)
+            {
+                target.LoadBibleFile(files[0], true);
+            }
+            else
+            {
+                DialogResult res = ShowMessageBox("Tagged folder is empty\r\nSelect another Bible Folder?", "Error!", MessageBoxButtons.YesNo);
+                if (res == DialogResult.Yes)
+                {
+                    biblesFolder = string.Empty;
+                }
+                else
+                {
+                    CloseForm();
+                    return;
+                }
+            }
+
 
             if (string.IsNullOrEmpty(config.KJV) || !System.IO.File.Exists(config.KJV))
             {
@@ -272,9 +291,7 @@ namespace BibleTaggingUtil
                 return;
             }
 
-
-            string[] files = Directory.GetFiles(taggedFolder);
-            target.LoadBibleFile(files[0], true); ;
+            this.Closing += BibleTaggingForm_Closing;
 
             referenceKJV.LoadBibleFile(config.KJV, true);
 
@@ -366,6 +383,23 @@ namespace BibleTaggingUtil
             }
         }
 
+
+        private DialogResult ShowMessageBox(string text, string caption, MessageBoxButtons buttons)
+        {
+            DialogResult result = DialogResult.OK;
+
+            if (InvokeRequired)
+            {
+                // Call this same method but append THREAD2 to the text
+                //Action safeWrite = delegate { ShowMessageBox(text, caption, buttons); };
+                result = (DialogResult) Invoke(new Func<DialogResult>(() => ShowMessageBox(text, caption, buttons)));
+            }
+            else
+            {
+                result = MessageBox.Show(text, caption, buttons);
+            }
+            return result;
+        }
 
         #region public properties
 
@@ -971,7 +1005,7 @@ namespace BibleTaggingUtil
                     // backup currentModule
                     if(Directory.Exists(backupPath))
                     {
-                        DialogResult res = MessageBox.Show("Overwrite old backup", "Do you want to overwrite existing Backup folder\r\n" + backupPath, MessageBoxButtons.YesNo);
+                        DialogResult res = ShowMessageBox("Overwrite old backup", "Do you want to overwrite existing Backup folder\r\n" + backupPath, MessageBoxButtons.YesNo);
                         if (res == DialogResult.Yes)
                         {
                             Directory.Delete(backupPath, true);

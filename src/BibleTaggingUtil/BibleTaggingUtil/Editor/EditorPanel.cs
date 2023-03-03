@@ -104,6 +104,7 @@ namespace BibleTaggingUtil.Editor
             dgvReferenceVerse.CellContentDoubleClick += Dgv_CellContentDoubleClick;
             dgvTargetVerse.CellContentDoubleClick += Dgv_CellContentDoubleClick;
             dgvTOTHTView.CellContentDoubleClick += DgvTOTHTView_CellContentDoubleClick;
+
             verse.VerseChanged += Verse_VerseChanged;
 
             this.PreviewKeyDown += EditorPanel_PreviewKeyDown;
@@ -124,6 +125,12 @@ namespace BibleTaggingUtil.Editor
 
         private void DgvTargetVerse_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+            if(e.RowIndex == 0)
+            {
+                // word edited
+                string newWord = (string)dgvTargetVerse[e.ColumnIndex, e.RowIndex].Value;
+                currentVerse.UpdateWord(e.ColumnIndex, newWord);
+            }
             TargetDirty = true;
         }
 
@@ -135,6 +142,12 @@ namespace BibleTaggingUtil.Editor
         public void ClearCurrentVerse()
         {
             tbCurrentReference.Text = string.Empty;
+            dgvTargetVerse.Rows.Clear();
+            dgvTargetVerse.ColumnCount = 0;
+            dgvReferenceVerse.Rows.Clear();
+            dgvReferenceVerse.ColumnCount = 0;
+            dgvTOTHTView.Rows.Clear();
+            dgvTOTHTView.ColumnCount = 0;
         }
 
         public void SaveCurrentVerse()
@@ -831,14 +844,15 @@ namespace BibleTaggingUtil.Editor
 
                 dgvTargetVerse[hittest.ColumnIndex, 1].Value = newValue.Trim();
                 currentVerse[hittest.ColumnIndex].StrongString = newValue.Trim();
-                SaveVerse(currentVerse);
 
                 SelectReferenceTags(newValue.Trim());
 
                 if (data.Source.Equals(dgvTargetVerse))
                 {
                     dgvTargetVerse[data.ColumnIndex, 1].Value = string.Empty;
+                    currentVerse[data.ColumnIndex].StrongString = string.Empty;
                 }
+                SaveVerse(currentVerse);
 
                 dgvTargetVerse.ClearSelection();
                 dgvTargetVerse[hittest.ColumnIndex, 1].Selected= true;
