@@ -145,7 +145,15 @@ namespace BibleTaggingUtil.Editor
             }
             else
             {
-                container.Target.Bible.Add(reference, verse);
+                string newRef = reference.Replace("Mar", "Mrk").Replace("Joh", "Jhn");
+                if (container.Target.Bible.ContainsKey(newRef))
+                {
+                    container.Target.Bible[newRef] = verse;
+                }
+                else
+                {
+                    container.Target.Bible.Add(reference, verse);
+                }
             }
         }
 
