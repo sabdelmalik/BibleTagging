@@ -559,7 +559,7 @@ namespace BibleTaggingUtil
             string folder = Properties.Settings.Default.BiblesFolder;
             if (!string.IsNullOrEmpty(folder))
             {
-                target.SaveUpdates();
+                //target.SaveUpdates();
                 editorPanel.ClearCurrentVerse();
                 new Thread(() => { LoadBibles(); }).Start();
             }

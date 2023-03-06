@@ -191,7 +191,23 @@ namespace BibleTaggingUtil.Editor
             }
             else
             {
-                targetVerse = e.VerseReference + " NotFound";
+                string newRef = e.VerseReference.
+                    Replace("Mar", "Mrk").
+                    Replace("Joh", "Jhn").
+                    Replace("Phi", "Php").
+                    Replace("Jam", "Jas").
+                    Replace("1Jo", "1Jn").
+                    Replace("2Jo", "2Jn").
+                    Replace("3Jo", "3Jn");
+                if (container.Target.Bible.ContainsKey(newRef))
+                {
+                    targetUpdatedVerse = Utils.GetVerseText(container.Target.Bible[newRef], true);
+                    UpdateTargetView(container.Target.Bible[newRef]);
+                }
+                else
+                {
+                    targetVerse = e.VerseReference + " NotFound";
+                }
             }
 
             if (container.TOTHT.Bible.ContainsKey(e.VerseReference))
@@ -206,12 +222,20 @@ namespace BibleTaggingUtil.Editor
             }
             else
             {
-                string bookName = e.VerseReference.Substring(0,3);
+                /*string bookName = e.VerseReference.Substring(0,3);
                 if (bookName == "Phi") bookName = e.VerseReference.Replace("Phi", "Php");
                 if (bookName == "Jam") bookName = e.VerseReference.Replace("Jam", "Jas");
                 if (bookName == "1Jo") bookName = e.VerseReference.Replace("1Jo", "1Jn");
                 if (bookName == "2Jo") bookName = e.VerseReference.Replace("2Jo", "2Jn");
-                if (bookName == "3Jo") bookName = e.VerseReference.Replace("3Jo", "3Jn");
+                if (bookName == "3Jo") bookName = e.VerseReference.Replace("3Jo", "3Jn");*/
+                string bookName = e.VerseReference.
+                    Replace("Mar", "Mrk").
+                    Replace("Joh", "Jhn").
+                    Replace("Phi", "Php").
+                    Replace("Jam", "Jas").
+                    Replace("1Jo", "1Jn").
+                    Replace("2Jo", "2Jn").
+                    Replace("3Jo", "3Jn");
                 if (container.TAGNT.Bible.ContainsKey(bookName))
                 {
                     Verse verseWords = container.TAGNT.Bible[bookName];
@@ -869,7 +893,11 @@ namespace BibleTaggingUtil.Editor
         {
             if (dgvTargetVerse.SelectedCells.Count == 1)
             {
-                SelectReferenceTags((string)dgvTargetVerse.Rows[1].Cells[e.ColumnIndex].Value);
+                string tag = (string)dgvTargetVerse.Rows[1].Cells[e.ColumnIndex].Value;
+                if (tag.Length > 4 && Char.IsDigit(tag[4]))
+                    tag = tag.Substring(0, 4);
+
+                SelectReferenceTags(tag);
             }
         }
 
