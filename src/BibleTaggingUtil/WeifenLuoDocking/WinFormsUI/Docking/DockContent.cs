@@ -19,6 +19,11 @@ namespace WeifenLuo.WinFormsUI.Docking
             }
         }
 
+        protected override void OnKeyUp(KeyEventArgs e)
+        {
+            base.OnKeyUp(e);
+        }
+
         //Suggested as a fix by bensty regarding form resize
         private void DockContent_ParentChanged(object Sender, EventArgs e)
         {

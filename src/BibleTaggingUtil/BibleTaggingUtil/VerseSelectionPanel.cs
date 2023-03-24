@@ -4,7 +4,9 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -24,26 +26,82 @@ namespace BibleTaggingUtil
 
         public event VerseChangedEventHandler VerseChanged;
 
-        bool useAltNames = true;
+        private string referencePattern = @"^([0-9A-Za-z]+)\s([0-9]+):([0-9]+)";
+
+        private bool useAltNames = true;
+
+        private int bookCount = 66;
 
         public VerseSelectionPanel()
         {
             InitializeComponent();
             this.ControlBox = false;
+
             for (int i = 0; i < Constants.osisNames.Length; i++)
             {
-                bibleBooks.Add(Constants.osisNames[i], new BibleBook(Constants.fileNames[i], Constants.osisAltNames[i], Constants.LAST_VERSE[i]));
+                bibleBooks.Add(Constants.ubsNames[i],
+                                    new BibleBook(Constants.fileNames[i], 
+                                                Constants.osisAltNames[i],
+                                                Constants.osisAltNames2[i],
+                                                Constants.ubsNames[i],
+                                                Constants.LAST_VERSE[i]));
             }
         }
 
         private void VerseSelectionPanel_Load(object sender, EventArgs e)
         {
-            lbBookNames.Items.AddRange(Constants.osisNames);
-            lbBookNames.SelectedIndex = 0;
+            //lbBookNames.Items.AddRange(Constants.ubsNames);
+            //lbBookNames.SelectedIndex = 0;
 
             toolStrip1.Cursor = Cursors.Default;
         }
 
+
+        public void SetBookCount(int count)
+        {
+            if(InvokeRequired) 
+            {
+                Invoke(new Action(() => { SetBookCount(count); }));
+            }
+            else
+            { 
+                BookCount = count; 
+            }
+
+        }
+        public int BookCount 
+        {
+            get
+            {
+                return bookCount;
+            }
+            set 
+            { 
+                bookCount = value;
+                if(bookCount == 27 )
+                {
+                    lbBookNames.Items.Clear();
+                    string[] names = new string[27];
+                    Array.Copy(Constants.ubsNames, 39, names, 0, 27);
+                    lbBookNames.Items.AddRange(names);
+                    lbBookNames.SelectedIndex = 0;
+                }
+                else if(bookCount == 39 )
+                {
+                    lbBookNames.Items.Clear();
+                    string[] names = new string[39];
+                    Array.Copy(Constants.ubsNames, names, 39);
+                    lbBookNames.Items.AddRange(names);
+                    lbBookNames.SelectedIndex = 0;
+                }
+                else
+                {
+                    lbBookNames.Items.Clear();
+                    lbBookNames.Items.AddRange(Constants.ubsNames);
+                    lbBookNames.SelectedIndex = 0;
+                }
+            }
+        }
 
         public Dictionary<string, BibleBook> BibleBooks
         {
@@ -97,11 +155,19 @@ namespace BibleTaggingUtil
             int chapter = lbChapters.SelectedIndex + 1;
             int verse = lbVerses.SelectedIndex + 1;
 
-            string verseRef = string.Format("{0:s} {1:d}:{2:d}", (useAltNames ? bibleBooks[book].BookAltName : book), chapter, verse);
-            int bookIdx = Array.IndexOf(Constants.osisNames, book);
+            string verseRef = string.Format("{0:s} {1:d}:{2:d}", book, chapter, verse);
+            //string verseRefAlt = string.Format("{0:s} {1:d}:{2:d}", bibleBooks[book].BookAltName, chapter, verse);
+            //string verseRefAlt2 = string.Format("{0:s} {1:d}:{2:d}", bibleBooks[book].BookAltName2, chapter, verse);
+            //string verseRefUBS = string.Format("{0:s} {1:d}:{2:d}", bibleBooks[book].BookUbsName, chapter, verse);
+            int bookIdx = Array.IndexOf(Constants.ubsNames, book);
             if (this.VerseChanged != null)
             {
-                this.VerseChanged(this, new VerseChangedEventArgs(verseRef, (bookIdx < 39) ? TestamentEnum.OLD : TestamentEnum.NEW));
+                this.VerseChanged(this, new VerseChangedEventArgs(
+                                        verseRef,
+                                        //verseRefAlt,
+                                        //verseRefAlt2,
+                                        //verseRefUBS,
+                                        (bookIdx < 39) ? TestamentEnum.OLD : TestamentEnum.NEW));
             }
 
         }
@@ -110,17 +176,35 @@ namespace BibleTaggingUtil
         public int CurrentBook
         {
             get { return lbBookNames.SelectedIndex; }
-            set { lbBookNames.SelectedIndex = value; }
+            set 
+            {
+                if (value > lbBookNames.Items.Count - 1)
+                    lbBookNames.SelectedIndex = 0;
+                else
+                    lbBookNames.SelectedIndex = value; 
+            }
         }
         public int CurrentChapter
         {
             get { return lbChapters.SelectedIndex; }
-            set { lbChapters.SelectedIndex = value; }
+            set 
+            {
+                if (value > lbChapters.Items.Count - 1)
+                    lbChapters.SelectedIndex = 0;
+                else
+                    lbChapters.SelectedIndex = value; 
+            }
         }
         public int CurrentVerse
         {
             get { return lbVerses.SelectedIndex; }
-            set { lbVerses.SelectedIndex = value; }
+            set 
+            { 
+                if (value > lbVerses.Items.Count - 1)
+                    lbVerses.SelectedIndex = 0;
+                else
+                     lbVerses.SelectedIndex = value; 
+            }
         }
 
         public void MoveToPrevious()
@@ -197,23 +281,21 @@ namespace BibleTaggingUtil
         public string GetNextRef(string currentReference)
         {
             string result = string.Empty;
-            bool osisName = false;
-            bool altName = false;
             try
             {
                 if (string.IsNullOrEmpty(currentReference))
                     return result;
 
-                int idx1 = currentReference.IndexOf(' ');
-                if (idx1 < 0)
+                Match mTx = Regex.Match(currentReference, referencePattern);
+                if (!mTx.Success)
+                {
+                    Tracing.TraceError(MethodBase.GetCurrentMethod().Name, "Incorrect reference format: " + currentReference);
                     return result;
-                int idx2 = currentReference.IndexOf(':', idx1 + 1);
-                if (idx2 < 0)
-                    return result;
+                }
 
-                string book = currentReference.Substring(0, idx1);
-                string chapter = currentReference.Substring(idx1 + 1, idx2 - idx1 - 1);
-                string verse = currentReference.Substring(idx2 + 1);
+                String book = mTx.Groups[1].Value;
+                string chapter = mTx.Groups[2].Value;
+                string verse = mTx.Groups[3].Value;
                 int currentChapter = 0;
                 int currentVerse = 0;
                 if (!int.TryParse(chapter, out currentChapter))
@@ -224,16 +306,6 @@ namespace BibleTaggingUtil
                 string newBook = book;
                 int newChapter = currentChapter;
                 int newVerse = currentVerse;
-
-                if(Constants.osisNames.Contains(newBook, StringComparer.OrdinalIgnoreCase))
-                    osisName = true;
-
-                if(Constants.osisAltNames.Contains(newBook, StringComparer.OrdinalIgnoreCase))
-                    altName = true;
-
-                // bibleBooks keys are osis
-                if(!osisName)
-                    book = Constants.osisNames[Array.IndexOf(Constants.osisAltNames, book)];
 
                 int[] lastVerse = bibleBooks[book].LastVerse;
                 if (currentVerse < (lastVerse[currentChapter - 1]))
@@ -249,10 +321,10 @@ namespace BibleTaggingUtil
                     }
                     else
                     {
-                        int currentBook = Array.IndexOf(Constants.osisNames, book);
-                        if (currentBook < (Constants.osisNames.Length - 1))
+                        int currentBook = Array.IndexOf(Constants.ubsNames, book);
+                        if (currentBook < (Constants.ubsNames.Length - 1))
                         {
-                            book = Constants.osisNames[currentBook + 1];
+                            newBook = Constants.ubsNames[currentBook + 1];
                             newChapter = 1;
                             newVerse = 1;
                         }
@@ -260,16 +332,11 @@ namespace BibleTaggingUtil
                     }
                 }
 
-                if (altName)
-                {
-                    newBook = Constants.osisAltNames[Array.IndexOf(Constants.osisNames, book)];
-                }
-
                 result = string.Format("{0} {1}:{2}", newBook, newChapter, newVerse);
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
             }
             return result;
 
@@ -277,47 +344,42 @@ namespace BibleTaggingUtil
 
         public void GotoVerse(string verseRef)
         {
-            if (string.IsNullOrEmpty(verseRef))
+            Match mTx = Regex.Match(verseRef, referencePattern);
+            if (!mTx.Success)
+            {
+                Tracing.TraceError(MethodBase.GetCurrentMethod().Name, "Incorrect reference format: " + verseRef);
                 return;
+            }
 
-            int idx1 = verseRef.IndexOf(' ');
-            if (idx1 < 0)
-                return;
-            int idx2 = verseRef.IndexOf(':', idx1 + 1);
-            if (idx2 < 0)
-                return;
-
-            string book = verseRef.Substring(0, idx1);
-            string chapter = verseRef.Substring(idx1 + 1, idx2 - idx1 - 1);
-            string verse = verseRef.Substring(idx2 + 1);
+            String book = mTx.Groups[1].Value;
+            string chapter = mTx.Groups[2].Value;
+            string verse = mTx.Groups[3].Value;
             int currentChapter = 0;
             int currentVerse = 0;
+
             if (!int.TryParse(chapter, out currentChapter))
                 return;
             if (!int.TryParse(verse, out currentVerse))
                 return;
 
-            string[] names = Constants.osisNames;
-            if (useAltNames)
-                names = Constants.osisAltNames;
+            //string[] names = Constants.osisNames;
+            //if (useAltNames)
+            //    names = Constants.osisAltNames;
 
             // reference version has
             // Sng as Sol
             // Ezk as Eze
             // Jol as Joe
             // Nam as Nah
-            if (book == "Sol") book = "Sng";
-            else if (book == "Eze") book = "Ezk";
-            else if (book == "Joe") book = "Jol";
-            else if (book == "Nah") book = "Nam";
+            //if (book == "Sol") book = "Sng";
+            //else if (book == "Eze") book = "Ezk";
+            //else if (book == "Joe") book = "Jol";
+            //else if (book == "Nah") book = "Nam";
 
 
-            int currentBook = Array.IndexOf(names, book);
+            int currentBook = Array.IndexOf(Constants.ubsNames, book);
 
             SetSelectedIndex(currentBook, currentChapter-1, currentVerse-1);
-
-
-
         }
 
         private void SetSelectedIndex(int currentBook, int currentChapter, int currentVerse)
@@ -357,13 +419,16 @@ namespace BibleTaggingUtil
 
     public class VerseChangedEventArgs : EventArgs
     {
-        public VerseChangedEventArgs(string verseReference, TestamentEnum testament)
+        public VerseChangedEventArgs(string verseReference,
+                                    TestamentEnum testament)
         {
             this.VerseReference = verseReference;
-            Testament = (testament == TestamentEnum.NEW)? "G" : "H";
+            this.Testament = testament;
+            this.StrongsPrefix = (testament == TestamentEnum.NEW)? "G" : "H";
         }
         public string VerseReference { get; private set; }
-        public string Testament { get; private set; }
+        public TestamentEnum Testament { get; private set; }
+        public string StrongsPrefix { get; private set; }
 
     }
 

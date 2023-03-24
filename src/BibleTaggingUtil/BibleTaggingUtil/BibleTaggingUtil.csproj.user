@@ -17,17 +17,14 @@
     <Compile Update="Editor\EditorPanel.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Editor\EditorPanelKJV.cs">
-      <SubType>Form</SubType>
+    <Compile Update="Editor\KJVGridView.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Update="Editor\EditorPanelTAGNT.cs">
-      <SubType>Form</SubType>
+    <Compile Update="Editor\TargetGridView.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Update="Editor\EditorPanelTarget.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Editor\EditorPanelTOTHT.cs">
-      <SubType>Form</SubType>
+    <Compile Update="Editor\TOHTHGridView.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Update="SettingsForm.cs">
       <SubType>Form</SubType>

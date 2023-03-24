@@ -59,6 +59,13 @@ namespace BibleTaggingUtil
             }
         }
 
+        public void SwapTags(int index1, int index2)
+        {
+            string[] temp = verse[index1].Strong;
+            verse[index1].Strong = verse[index2].Strong;
+            verse[index2].Strong = temp;
+        }
+
         /// <summary>
         /// Merges two verse words together
         /// </summary>

@@ -12,6 +12,7 @@ using System.Threading.Channels;
 using System.Threading.Tasks;
 using System.Configuration.Internal;
 using System.Windows.Forms;
+using System.Reflection;
 
 namespace BibleTaggingUtil
 {
@@ -154,7 +155,7 @@ namespace BibleTaggingUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                 throw;
             }
         }
@@ -264,7 +265,7 @@ namespace BibleTaggingUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                 throw;
             }
 
@@ -308,7 +309,7 @@ namespace BibleTaggingUtil
                         }
                         catch (Exception ex)
                         {
-                            int x = 0;
+                            Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                         }
 
 
@@ -366,7 +367,7 @@ namespace BibleTaggingUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                 throw;
             }
         }
@@ -394,7 +395,7 @@ namespace BibleTaggingUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                 throw;
             }
         }
@@ -460,7 +461,7 @@ namespace BibleTaggingUtil
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                 throw;
             }
         }

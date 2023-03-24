@@ -3,7 +3,9 @@ using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms.Design;
 
@@ -21,20 +23,40 @@ namespace BibleTaggingUtil.BibleVersions
         /// </summary>
         protected Dictionary<string, Verse> bible = new Dictionary<string, Verse>();
 
+        /// <summary>
+        /// Bible Dictionary
+        /// Key: UBS book name
+        /// value: loaded Bible book name
+        /// </summary>
+        protected Dictionary<string, string> bookNames = new Dictionary<string, string>();
+
+        protected List<string> bookNamesList = new List<string>();
+
+        private const string referencePattern1 = @"^([0-9A-Za-z]+)\s([0-9]+):([0-9]+)\s*(.*)";
+        private const string referencePattern2 = @"^[0-9]+_([0-9A-Za-z]+)\.([0-9]+)\.([0-9]+)\s*(.*)";
+        private const string referencePattern3 = @"^([0-9A-Za-z]{3})\.([0-9]+)\.([0-9]+)\s*(.*)";
+        private string textReferencePattern = string.Empty;  
+
+
         public BibleVersion(BibleTaggingForm container)
         {
             this.container = container;
         }
 
-        public bool LoadBibleFile(string textFilePath, bool newBible)
+        public bool LoadBibleFile(string textFilePath, bool newBible, bool more)
         {
-            if(newBible)
+            if (newBible)
+            {
                 bible.Clear();
-            return LoadBibleFile(textFilePath);
+                bookNames.Clear();
+                bookNamesList.Clear();
+            }
+            return LoadBibleFileInternal(textFilePath, more);
         }
 
-        private bool LoadBibleFile(string textFilePath)
+        private bool LoadBibleFileInternal(string textFilePath, bool more)
         {
+            Tracing.TraceEntry(MethodBase.GetCurrentMethod().Name, textFilePath, more);
             bool result = false;
 
             if (File.Exists(textFilePath))
@@ -46,34 +68,160 @@ namespace BibleTaggingUtil.BibleVersions
                     {
                         while (reader.Peek() >= 0)
                         {
-                            var line = reader.ReadLine();
-                            ParseLine(line.Trim(' '));
+                            var line = reader.ReadLine().Trim(' ');
+                            if (!string.IsNullOrEmpty(line))
+                            {
+                                if (string.IsNullOrEmpty(textReferencePattern))
+                                {
+                                    //if (!SetSearchPattern(line, out textReferencePattern))
+                                    //    continue;
+                                    SetSearchPattern(line, out textReferencePattern);
+                                }
+                                if (!string.IsNullOrEmpty(textReferencePattern))
+                                {
+                                    AddBookName(line);
+                                }
+                                ParseLine(line);
+                            }
                         }
 
                     }
                 }
 
             }
+
+            if(!more && !(new int[] {66, 39, 27 }).Contains(bookNamesList.Count))
+            {
+                Tracing.TraceError(MethodBase.GetCurrentMethod().Name, string.Format("{0}:Book Names Count = {1}. Was expecting 66, 39 or 27",
+                                        Path.GetFileName(textFilePath), bookNamesList.Count));
+                return false;
+            }
+
+
+            if (bookNamesList.Count == 66 || bookNamesList.Count == 39)
+            {
+                for (int i = 0; i < bookNamesList.Count; i++)
+                {
+                    bookNames.Add(Constants.ubsNames[i], bookNamesList[i]);
+                }
+            }
+            else if (bookNamesList.Count == 27)
+            {
+               for (int i = 0; i < bookNamesList.Count; i++)
+                {
+                    bookNames.Add(Constants.ubsNames[i+39], bookNamesList[i]);
+                }
+            }
             return result;
         }
 
+        public int BookCount
+        {
+            get
+            {
+                return bookNamesList.Count;
+            }
+        }
         public Dictionary<string, Verse> Bible
         { get { return bible; } }
 
-        protected virtual void ParseLine(string line)
+
+        public string this[string ubsName]
         {
-            // find spcae between book and Chapter
-            int spaceB = line.IndexOf(' ');
-            // find spcae between Verse number and Text
-            int spaceV = line.IndexOf(' ', spaceB + 1);
-            if (spaceV == -1)
+            get
             {
-                throw new Exception(string.Format("Ill formed verse line!"));
+                string bookName = string.Empty;
+                try
+                {
+                    if(bookNames.Count > 0)
+                    bookName = bookNames[ubsName];
+                }
+                catch(Exception ex)
+                {
+                    Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
+                }
+                return bookName;
+
+            }
+        }
+
+        private bool AddBookName(string line)
+        {
+            if(line.ToLower().Contains("gen"))
+            {
+                int o = 0;
+            }
+            Match mTx = Regex.Match(line, textReferencePattern);
+            if (!mTx.Success)
+            {
+                //Tracing.TraceError(MethodBase.GetCurrentMethod().Name, "Could not detect text reference: " + line);
+                return false;
             }
 
-            string book = line.Substring(0, spaceB);
-            string reference = line.Substring(0, spaceV);
-            string verse = line.Substring(spaceV + 1);
+            String book = mTx.Groups[1].Value;
+            if (!bookNamesList.Contains(book))
+                bookNamesList.Add(book);
+
+            return true;
+        }
+
+        private bool SetSearchPattern(string line, out string referancePattern)
+        {
+
+            Match mTx = Regex.Match(line, referencePattern1);
+            if (mTx.Success)
+            {
+                referancePattern = referencePattern1;
+                return true;
+            }
+
+            mTx = Regex.Match(line, referencePattern2);
+            if (mTx.Success)
+            {
+                referancePattern = referencePattern2;
+                return true;
+            }
+
+            mTx = Regex.Match(line, referencePattern3);
+            if (mTx.Success)
+            {
+                referancePattern = referencePattern3;
+                return true;
+            }
+
+            //Tracing.TraceError(MethodBase.GetCurrentMethod().Name, "Could not detect reference pattern: " + line);
+            referancePattern = string.Empty;
+            return false;
+        }
+
+        protected virtual void ParseLine(string line)
+        {
+
+            Match mTx = Regex.Match(line, @"^([0-9A-Za-z]+)\s([0-9]+):([0-9]+)\s*(.*)");
+
+            /*            // find spcae between book and Chapter
+                        int spaceB = line.IndexOf(' ');
+                        // find spcae between Verse number and Text
+                        int spaceV = line.IndexOf(' ', spaceB + 1);
+                        if (spaceV == -1)
+                        {
+                            throw new Exception(string.Format("Ill formed verse line!"));
+                        }
+
+                        string book = line.Substring(0, spaceB);
+                        string reference = line.Substring(0, spaceV);
+                        string verse = line.Substring(spaceV + 1);*/
+
+            string book = mTx.Groups[1].Value;
+            string chapter = mTx.Groups[2].Value;
+            string verseNo = mTx.Groups[3].Value;
+            string verse = mTx.Groups[4].Value;
+            string reference = string.Format("{0} {1}:{2}", book, chapter, verseNo);
+            if(reference == "Jhn 1:1")
+            { 
+                int x = 0;
+            }
+
 
             BibleTestament testament = Utils.GetTestament(reference);
 

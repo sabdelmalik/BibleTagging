@@ -6,6 +6,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -112,7 +113,7 @@ namespace BibleTaggingUtil.BibleVersions
                     }
                     catch (Exception ex)
                     {
-                        string x = ex.Message;
+                        Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                     }
 
 
@@ -215,7 +216,7 @@ namespace BibleTaggingUtil.BibleVersions
                 }
                 catch (Exception ex)
                 {
-                    string s = ex.Message;
+                    Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                 }
 
 
@@ -316,12 +317,12 @@ namespace BibleTaggingUtil.BibleVersions
                 try
                 {
                     int wordNumber = verseWords.Count;
-
-                    verseWords[wordNumber] = new VerseWord(hebrew, englishWord, strongRefs, transliteration, currentVerseRef);
+                    if(englishWord.ToLower() != "verseend")
+                        verseWords[wordNumber] = new VerseWord(hebrew, englishWord, strongRefs, transliteration, currentVerseRef);
                 }
                 catch (Exception ex)
                 {
-                    string e = ex.Message;
+                    Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                 }
 
             }

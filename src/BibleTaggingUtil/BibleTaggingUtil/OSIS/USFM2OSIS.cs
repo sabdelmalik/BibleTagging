@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -143,9 +144,9 @@ namespace SM.Bible.Formats.OSIS
                 {
                     encoding = Encoding.GetEncoding(encodingStr);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    encoding = Encoding.UTF8;
+                    Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                 }
 
                 using (StreamReader sr = new StreamReader(filename, encoding))
@@ -174,9 +175,9 @@ namespace SM.Bible.Formats.OSIS
                             {
                                 encoding = Encoding.GetEncoding(encodingStr);
                             }
-                            catch
+                            catch (Exception ex)
                             {
-                                encoding = Encoding.UTF8;
+                                Tracing.TraceException(MethodBase.GetCurrentMethod().Name, ex.Message);
                             }
 
 

@@ -55,6 +55,7 @@ namespace BibleTaggingUtil
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog3 = new System.Windows.Forms.FolderBrowserDialog();
             this.waitCursorAnimation = new System.Windows.Forms.PictureBox();
+            this.reloadTargetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.waitCursorAnimation)).BeginInit();
             this.SuspendLayout();
@@ -97,6 +98,7 @@ namespace BibleTaggingUtil
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.setBibleFolderToolStripMenuItem,
+            this.reloadTargetToolStripMenuItem,
             this.saveUpdatedTartgetToolStripMenuItem,
             this.settingsToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
@@ -106,21 +108,21 @@ namespace BibleTaggingUtil
             // setBibleFolderToolStripMenuItem
             // 
             this.setBibleFolderToolStripMenuItem.Name = "setBibleFolderToolStripMenuItem";
-            this.setBibleFolderToolStripMenuItem.Size = new System.Drawing.Size(197, 26);
+            this.setBibleFolderToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.setBibleFolderToolStripMenuItem.Text = "Set Bible Folder";
             this.setBibleFolderToolStripMenuItem.Click += new System.EventHandler(this.setBibleFolderToolStripMenuItem_Click);
             // 
             // saveUpdatedTartgetToolStripMenuItem
             // 
             this.saveUpdatedTartgetToolStripMenuItem.Name = "saveUpdatedTartgetToolStripMenuItem";
-            this.saveUpdatedTartgetToolStripMenuItem.Size = new System.Drawing.Size(197, 26);
+            this.saveUpdatedTartgetToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.saveUpdatedTartgetToolStripMenuItem.Text = "Save Updatest";
             this.saveUpdatedTartgetToolStripMenuItem.Click += new System.EventHandler(this.saveUpdatedTartgetToolStripMenuItem_Click);
             // 
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(197, 26);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
@@ -222,6 +224,13 @@ namespace BibleTaggingUtil
             this.waitCursorAnimation.TabStop = false;
             this.waitCursorAnimation.Visible = false;
             // 
+            // reloadTargetToolStripMenuItem
+            // 
+            this.reloadTargetToolStripMenuItem.Name = "reloadTargetToolStripMenuItem";
+            this.reloadTargetToolStripMenuItem.Size = new System.Drawing.Size(224, 26);
+            this.reloadTargetToolStripMenuItem.Text = "Reload Target";
+            this.reloadTargetToolStripMenuItem.Click += new System.EventHandler(this.reloadTargetToolStripMenuItem_Click);
+            // 
             // BibleTaggingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
@@ -270,6 +279,7 @@ namespace BibleTaggingUtil
         private System.Windows.Forms.PictureBox waitCursorAnimation;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reloadTargetToolStripMenuItem;
     }
 }
 
