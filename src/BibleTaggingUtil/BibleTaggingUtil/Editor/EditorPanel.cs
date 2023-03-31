@@ -247,7 +247,7 @@ namespace BibleTaggingUtil.Editor
                                 {
                                     if (verseWords[j].Strong.Length == 2)
                                     {
-                                        vw.Strong[0] = verseWords[j].Strong[0];
+                                        vw.Strong[0] = verseWords[j].Strong[1];
                                     }
                                     break;
                                 }

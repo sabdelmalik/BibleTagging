@@ -10,7 +10,7 @@ namespace BibleTaggingUtil.BibleVersions
 {
     public class ReferenceVersionKJV : BibleVersion
     {
-        public ReferenceVersionKJV(BibleTaggingForm container) : base(container) { }
+        public ReferenceVersionKJV(BibleTaggingForm container) : base(container, 23145 + 7957) { }
 
         public void Load()
         {

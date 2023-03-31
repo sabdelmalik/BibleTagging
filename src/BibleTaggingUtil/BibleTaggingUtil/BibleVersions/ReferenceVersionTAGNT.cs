@@ -34,7 +34,7 @@ namespace BibleTaggingUtil.BibleVersions
 
         ParseState pState = ParseState.Initial;
 
-        public ReferenceVersionTAGNT(BibleTaggingForm container) : base(container) { }
+        public ReferenceVersionTAGNT(BibleTaggingForm container) : base(container, 7959) { }
 
         string verseReference = string.Empty;
         string verseRef = string.Empty;
@@ -164,6 +164,10 @@ namespace BibleTaggingUtil.BibleVersions
 
                             //sw.WriteLine(string.Format("{0} {1}:{2} {3}", bookName, refParts[1], refParts[2], strongsline));
                             bible[verseRef] = verseWords;
+
+                            currentVerseCount++;
+                            container.UpdateProgress(bibleName, (100 * currentVerseCount) / totalVerses);
+
                             verseReference = string.Empty;
                             verseWordCount = 0;
                             strongsCount = 0;

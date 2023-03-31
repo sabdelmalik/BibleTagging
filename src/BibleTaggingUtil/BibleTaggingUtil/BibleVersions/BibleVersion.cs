@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms.Design;
-
+using System.Xml.Schema;
 
 namespace BibleTaggingUtil.BibleVersions
 {
@@ -35,13 +35,19 @@ namespace BibleTaggingUtil.BibleVersions
         private const string referencePattern1 = @"^([0-9A-Za-z]+)\s([0-9]+):([0-9]+)\s*(.*)";
         private const string referencePattern2 = @"^[0-9]+_([0-9A-Za-z]+)\.([0-9]+)\.([0-9]+)\s*(.*)";
         private const string referencePattern3 = @"^([0-9A-Za-z]{3})\.([0-9]+)\.([0-9]+)\s*(.*)";
-        private string textReferencePattern = string.Empty;  
+        private string textReferencePattern = string.Empty;
 
+        protected string bibleName = string.Empty;
+        protected int totalVerses = 0;
+        protected int currentVerseCount;
 
-        public BibleVersion(BibleTaggingForm container)
+        public BibleVersion(BibleTaggingForm container, int totalVerses)
         {
             this.container = container;
+            this.totalVerses = totalVerses;
         }
+
+        public string BibleName { set { bibleName = value; } }
 
         public bool LoadBibleFile(string textFilePath, bool newBible, bool more)
         {
@@ -50,6 +56,7 @@ namespace BibleTaggingUtil.BibleVersions
                 bible.Clear();
                 bookNames.Clear();
                 bookNamesList.Clear();
+                currentVerseCount = 0;
             }
             return LoadBibleFileInternal(textFilePath, more);
         }
@@ -292,6 +299,9 @@ namespace BibleTaggingUtil.BibleVersions
             }
 
             bible.Add(reference, verseWords);
+            currentVerseCount++;
+            container.UpdateProgress(bibleName, (100 * currentVerseCount) / totalVerses);
+
         }
 
     }

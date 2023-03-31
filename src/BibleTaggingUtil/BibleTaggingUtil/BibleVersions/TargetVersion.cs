@@ -14,7 +14,7 @@ namespace BibleTaggingUtil.BibleVersions
         System.Timers.Timer saveTimer = null;
 
 
-        public TargetVersion(BibleTaggingForm container) : base(container) { }
+        public TargetVersion(BibleTaggingForm container) : base(container, 31104) { }
 
         public void SaveUpdates()
         {

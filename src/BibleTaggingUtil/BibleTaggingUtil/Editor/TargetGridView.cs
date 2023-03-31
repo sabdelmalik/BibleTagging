@@ -598,7 +598,7 @@ namespace BibleTaggingUtil.Editor
                 // special Handling for Aramaic
                 if (strings.Length == 2 && IsCurrentTextAramaic)
                 {
-                    strings = new string[1] { strings[0] };
+                    strings = new string[1] { strings[1] };
                     if(Control.ModifierKeys != Keys.Alt)
                         newValue = string.Empty;
                 }

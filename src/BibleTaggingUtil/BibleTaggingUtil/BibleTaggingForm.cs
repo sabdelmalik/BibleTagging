@@ -31,6 +31,7 @@ namespace BibleTaggingUtil
         private BrowserPanel browserPanel;
         private EditorPanel editorPanel;
         private VerseSelectionPanel verseSelectionPanel;
+        private ProgressForm progressForm;
 
         private TargetVersion target;
         private ReferenceVersionKJV referenceKJV;
@@ -72,7 +73,7 @@ namespace BibleTaggingUtil
             target = new TargetVersion(this);
             referenceKJV = new ReferenceVersionKJV(this);
             referenceTOTHT = new ReferenceVersionTOTHT(this);
-            referenceTAGNT = new ReferenceVersionTAGNT(this);            
+            referenceTAGNT = new ReferenceVersionTAGNT(this);
         }
 
         #region Form Events
@@ -107,6 +108,8 @@ namespace BibleTaggingUtil
             browserPanel.LexiconWebsite = "https://www.blueletterbible.org/lexicon/{0}/kjv/wlc/0-1/";
             browserPanel.NavigateToTag("h1");
             //browserPanel.NavigateTo("https://www.blueletterbible.org/lexicon/h1/kjv/wlc/0-1/");
+
+            progressForm= new ProgressForm(this);
 
             verseSelectionPanel = new VerseSelectionPanel();
             verseSelectionPanel.Text = "Verse Selection";
@@ -163,9 +166,12 @@ namespace BibleTaggingUtil
 
         private void BibleTaggingForm_Resize(object sender, EventArgs e)
         {
-            waitCursorAnimation.Location = new Point(
-                (this.Width / 2) - (waitCursorAnimation.Width / 2), 
-                (this.Height / 2) - (waitCursorAnimation.Height / 2));
+            progressForm.Location = new Point(
+                this.Location.X + (this.Width / 2) - (progressForm.Width / 2),
+                this.Location.Y + (this.Height / 2) - (progressForm.Height / 2));
+            //waitCursorAnimation.Location = new Point(
+            //    (this.Width / 2) - (waitCursorAnimation.Width / 2), 
+            //    (this.Height / 2) - (waitCursorAnimation.Height / 2));
         }
 
 
@@ -248,6 +254,10 @@ namespace BibleTaggingUtil
                     }
 
                     editorPanel.TargetBibleName(Path.GetFileName(biblesFolder));
+                    target.BibleName = Path.GetFileName(biblesFolder);
+                    referenceKJV.BibleName = "KJV";
+                    referenceTAGNT.BibleName = "TAGNT";
+                    referenceTOTHT.BibleName = "TOTHT";
 
                     config = new ConfigurationHolder();
                     string confResult = config.ReadBiblesConfig(biblesFolder);
@@ -304,7 +314,6 @@ namespace BibleTaggingUtil
             {
                 target.LoadBibleFile(files[0], true, false);
                 VerseSelectionPanel.SetBookCount(target.BookCount);
-
             }
             else
             {
@@ -320,6 +329,7 @@ namespace BibleTaggingUtil
                 }
             }
 
+            StartGui();
 
             if (string.IsNullOrEmpty(config.KJV) || !System.IO.File.Exists(config.KJV))
             {
@@ -331,6 +341,8 @@ namespace BibleTaggingUtil
             this.Closing += BibleTaggingForm_Closing;
 
             referenceKJV.LoadBibleFile(config.KJV, true, false);
+
+            StartGui();
 
             bool result = false;
             if (config.HebrewReferences.Count > 0)
@@ -407,8 +419,20 @@ namespace BibleTaggingUtil
                 if (wait)
                 {
                     this.Cursor = Cursors.WaitCursor;
-                    waitCursorAnimation.Visible = true;
-                    waitCursorAnimation.BringToFront();
+                    //waitCursorAnimation.Visible = true;
+                    //aitCursorAnimation.BringToFront();
+                    progressForm.Clear();
+
+                    //progressForm.Location = new Point((this.Width / 2) - (progressForm.Width / 2),
+                    //                                  (this.Height / 2) - (progressForm.Height / 2));
+                     
+                    progressForm.Show();
+
+                    progressForm.Location = new Point(
+                        this.Location.X + (this.Width / 2) - (progressForm.Width / 2),
+                        this.Location.Y + (this.Height / 2) - (progressForm.Height / 2));
+
+
                     menuStrip1.Enabled = false;
                     verseSelectionPanel.Enabled = false;
                     editorPanel.Enabled = false;
@@ -416,11 +440,31 @@ namespace BibleTaggingUtil
                 else
                 {
                     this.Cursor = Cursors.Default;
-                    waitCursorAnimation.Visible = false;
+                    //waitCursorAnimation.Visible = false;
+                    progressForm.Visible = false;
                     menuStrip1.Enabled = true;
                     verseSelectionPanel.Enabled = true;
                     editorPanel.Enabled = true;
                 }
+            }
+        }
+
+        public void UpdateProgress(string label, int progress)
+        {
+            if (InvokeRequired)
+            {
+                try
+                {
+                    // Call this same method but append THREAD2 to the text
+                    Action safeWrite = delegate { UpdateProgress(label, progress); };
+                    Invoke(safeWrite);
+                }
+                catch (Exception ex){ }   
+            }
+            else
+            {
+                progressForm.Label = "Loading " + label;
+                progressForm.Progress = progress;
             }
         }
 
@@ -975,6 +1019,7 @@ namespace BibleTaggingUtil
             try
             {
                 WaitCursorControl(true);
+                UpdateProgress("Creating Module", 50);
                 string biblesFolder = Properties.Settings.Default.BiblesFolder;
                 string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 string modulesFolder = Path.Combine(appData, "Sword\\modules\\texts\\ztext");
@@ -1030,6 +1075,7 @@ namespace BibleTaggingUtil
                 process.Start();
                 while (!process.HasExited) ;
 
+                WaitCursorControl(false);
                 MessageBox.Show("Bible Generation completed!");
 
             }
