@@ -576,7 +576,7 @@ namespace BibleTaggingUtil.Editor
         protected override void OnDragDrop(DragEventArgs drgevent)
         {
             DragData data = drgevent.Data.GetData(typeof(DragData)) as DragData;
-            string newValue = data.Text;
+            string droppedValue = data.Text;
             Point cursorLocation = this.PointToClient(new Point(drgevent.X, drgevent.Y));
 
             System.Windows.Forms.DataGridView.HitTestInfo hittest = this.HitTest(cursorLocation.X, cursorLocation.Y);
@@ -588,34 +588,35 @@ namespace BibleTaggingUtil.Editor
                     if (data.ColumnIndex == hittest.ColumnIndex)
                         return;
                 }
-                newValue = newValue.Replace("+G", "> <");
-                string[] strings = newValue.Split(' ');
-                newValue = string.Empty;
-                string currentText = (string)this[hittest.ColumnIndex, 1].Value;
-                if (!string.IsNullOrEmpty(currentText) && !currentText.Contains("???"))
-                    newValue = currentText;
+
+                droppedValue = droppedValue.Replace("+G", "> <");
+                string[] droppedValueParts = droppedValue.Split(' ');
+                String newValue = string.Empty;
+
+                string currentValue = (string)this[hittest.ColumnIndex, 1].Value;
+
+                if (!string.IsNullOrEmpty(currentValue) && !currentValue.Contains("???") && Control.ModifierKeys == Keys.Control)
+                    newValue = currentValue;
 
                 // special Handling for Aramaic
-                if (strings.Length == 2 && IsCurrentTextAramaic)
+                if (droppedValueParts.Length == 2 && IsCurrentTextAramaic)
                 {
-                    strings = new string[1] { strings[1] };
-                    if(Control.ModifierKeys != Keys.Alt)
-                        newValue = string.Empty;
+                    droppedValueParts = new string[1] { droppedValueParts[1] };
                 }
 
-                for (int i = 0; i < strings.Length; i++)
+                for (int i = 0; i < droppedValueParts.Length; i++)
                 {
-                    if (strings[i].Contains('('))
+                    if (droppedValueParts[i].Contains('('))
                         continue; //skip morphology
 
-                    string tmp = strings[i].Trim().Replace("<", "").Replace(">", "");
+                    string tmp = droppedValueParts[i].Trim().Replace("<", "").Replace(">", "");
                     tmp = ("0000" + tmp).Substring(tmp.Length);
                     int val = Convert.ToInt32(tmp);
                     if (val > 0)
                     {
                         tmp = "<" + tmp + ">";
-                        if (!newValue.Contains(tmp) || Control.ModifierKeys == Keys.Alt)
-                            newValue += string.IsNullOrEmpty(newValue) ? tmp : (" " + tmp);
+ //                       if (!droppedValue.Contains(tmp) || Control.ModifierKeys == Keys.Alt)
+                            newValue += string.IsNullOrEmpty(droppedValue) ? tmp : (" " + tmp);
                     }
                 }
                 if (this.CurrentVerse != null)

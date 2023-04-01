@@ -463,7 +463,7 @@ namespace BibleTaggingUtil
             }
             else
             {
-                progressForm.Label = "Loading " + label;
+                progressForm.Label = label;
                 progressForm.Progress = progress;
             }
         }
@@ -1019,7 +1019,7 @@ namespace BibleTaggingUtil
             try
             {
                 WaitCursorControl(true);
-                UpdateProgress("Creating Module", 50);
+                UpdateProgress("Creating SWORD Module", 50);
                 string biblesFolder = Properties.Settings.Default.BiblesFolder;
                 string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                 string modulesFolder = Path.Combine(appData, "Sword\\modules\\texts\\ztext");
@@ -1076,7 +1076,7 @@ namespace BibleTaggingUtil
                 while (!process.HasExited) ;
 
                 WaitCursorControl(false);
-                MessageBox.Show("Bible Generation completed!");
+                MessageBox.Show("Module Generation completed!");
 
             }
             catch (Exception ex)

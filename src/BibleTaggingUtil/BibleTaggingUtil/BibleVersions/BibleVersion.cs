@@ -300,7 +300,7 @@ namespace BibleTaggingUtil.BibleVersions
 
             bible.Add(reference, verseWords);
             currentVerseCount++;
-            container.UpdateProgress(bibleName, (100 * currentVerseCount) / totalVerses);
+            container.UpdateProgress("Loading " + bibleName, (100 * currentVerseCount) / totalVerses);
 
         }
 

@@ -166,7 +166,7 @@ namespace BibleTaggingUtil.BibleVersions
                             bible[verseRef] = verseWords;
 
                             currentVerseCount++;
-                            container.UpdateProgress(bibleName, (100 * currentVerseCount) / totalVerses);
+                            container.UpdateProgress("Loading " + bibleName, (100 * currentVerseCount) / totalVerses);
 
                             verseReference = string.Empty;
                             verseWordCount = 0;

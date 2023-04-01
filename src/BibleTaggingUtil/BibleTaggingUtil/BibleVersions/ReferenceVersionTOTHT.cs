@@ -25,6 +25,7 @@ namespace BibleTaggingUtil.BibleVersions
         /// Value: a populated VerseWord instance
         /// </summary>
         private Verse verseWords = null;
+        private string currentVerseRef = string.Empty;
 
         /// <summary>
         /// Bible Dictionary
@@ -94,7 +95,6 @@ namespace BibleTaggingUtil.BibleVersions
 
         }
 
-        string currentVerseRef = string.Empty;
 
         /// <summary>
         /// 
@@ -158,7 +158,7 @@ namespace BibleTaggingUtil.BibleVersions
                 verseWords = new Verse();
 
                 currentVerseCount++;
-                container.UpdateProgress(bibleName, (100 * currentVerseCount)/ totalVerses);
+                container.UpdateProgress( "Loading " + bibleName, (100 * currentVerseCount)/ totalVerses);
 
             }
 
@@ -357,17 +357,21 @@ namespace BibleTaggingUtil.BibleVersions
                 verseWords = new Verse();
             }
 
+            if(currentVerseRef.Contains("Mal 4:6"))
+            {
+                int x = 0;
+            }    
 
             if (verseRef != currentVerseRef)
             {
                 // we are moving to a new verse
                 // save the completed verse
-                bible.Add(currentVerseRef, verseWords);
+                //bible.Add(currentVerseRef, verseWords);
                 currentVerseRef = verseRef;
                 verseWords = new Verse();
 
                 currentVerseCount++;
-                container.UpdateProgress(bibleName, (100 * currentVerseCount) / totalVerses);
+                container.UpdateProgress("Loading " + bibleName, (100 * currentVerseCount) / totalVerses);
 
             }
 
@@ -456,7 +460,13 @@ namespace BibleTaggingUtil.BibleVersions
                 {
                     int wordNumber = verseWords.Count;
                     if (englishWord.ToLower() != "verseend" && strongRefs[0] != "9001" && strongRefs[0] != "9014" && strongRefs[0] != "9015")
+                    {
                         verseWords[wordNumber] = new VerseWord(hebrew, englishWord, strongRefs, transliteration, currentVerseRef);
+                        if (bible.ContainsKey(currentVerseRef))
+                            bible[currentVerseRef] = verseWords;
+                        else
+                            bible.Add(currentVerseRef, verseWords);
+                    }
                 }
                 catch (Exception ex)
                 {
